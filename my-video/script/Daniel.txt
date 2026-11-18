@@ -1,0 +1,20 @@
+provider: elevenlabs
+voice: Brian
+model: eleven_multilingual_v2
+stability: 0.4
+style: 0.35
+speed: 0.92
+theme: dusk
+sfx: off
+tail: 3.5
+---
+# theme can be: dusk, day, winter
+# format:  pause-before-line-in-seconds | what the narrator says
+# @cut = the line where the camera cuts to the car
+0.4 | Nobody knew my secret.
+0.5 | Everyone in town knew I was a quiet man.
+0.5 | I left for work every morning, and came home at exactly six PM.
+0.5 | I never spoke to my neighbours.
+@cut 1.4 | But tonight... a car I had never seen before... stopped outside my house.
+1.0 | The engine stayed running.
+1.2 | And the driver... already knew my name.

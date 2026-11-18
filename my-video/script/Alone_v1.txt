@@ -1,0 +1,30 @@
+provider: elevenlabs
+voice: Brian
+model: eleven_multilingual_v2
+stability: 0.4
+style: 0.35
+speed: 0.92
+theme: dusk
+story: alone
+sfx: off
+tail: 2.5
+title: I WASN'T ALONE
+highlight: footsteps, nobody, don't turn around
+---
+# cues (@steps, @stop, ...) tell the camera and Daniel what to do on that line
+0.5 | I walked home on the same street every night.
+0.6 | Same road. Same houses. Same streetlights.
+0.7 | But one night, something felt different.
+@steps 0.7 | I could hear footsteps behind me.
+@stop 0.8 | I stopped.
+0.9 | The footsteps stopped too.
+@walk 0.9 | I started walking again.
+0.5 | So did they.
+@turn 0.8 | I turned around…
+@nobody 0.9 | Nobody.
+@resume 1.2 | I laughed it off and kept going.
+0.7 | Then I heard a voice whisper right behind my ear:
+@whisper 0.8 | "Don't turn around again."
+@freeze 1.2 | I froze.
+0.8 | Because this time…
+0.8 | I could feel someone breathing on my neck.

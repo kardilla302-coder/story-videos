@@ -1,0 +1,377 @@
+{
+ "fps": 30,
+ "total": 33.348,
+ "totalFrames": 1001,
+ "cutFrame": 516,
+ "hasAudio": false,
+ "theme": "dusk",
+ "sfx": false,
+ "title": "",
+ "subtitle": "",
+ "endtext": "",
+ "highlight": [],
+ "tags": {
+  "cut": 17.213
+ },
+ "lines": [
+  {
+   "text": "Nobody knew my secret.",
+   "start": 0.4,
+   "dur": 1.739,
+   "file": "line_01.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "Nobody",
+     "s": 0.05,
+     "e": 0.521
+    },
+    {
+     "w": "knew",
+     "s": 0.521,
+     "e": 0.874
+    },
+    {
+     "w": "my",
+     "s": 0.874,
+     "e": 1.109
+    },
+    {
+     "w": "secret.",
+     "s": 1.109,
+     "e": 1.639
+    }
+   ]
+  },
+  {
+   "text": "Everyone in town knew I was a quiet man.",
+   "start": 2.639,
+   "dur": 3.913,
+   "file": "line_02.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "Everyone",
+     "s": 0.05,
+     "e": 0.803
+    },
+    {
+     "w": "in",
+     "s": 0.803,
+     "e": 1.104
+    },
+    {
+     "w": "town",
+     "s": 1.104,
+     "e": 1.555
+    },
+    {
+     "w": "knew",
+     "s": 1.555,
+     "e": 2.007
+    },
+    {
+     "w": "I",
+     "s": 2.007,
+     "e": 2.233
+    },
+    {
+     "w": "was",
+     "s": 2.233,
+     "e": 2.609
+    },
+    {
+     "w": "a",
+     "s": 2.609,
+     "e": 2.835
+    },
+    {
+     "w": "quiet",
+     "s": 2.835,
+     "e": 3.361
+    },
+    {
+     "w": "man.",
+     "s": 3.361,
+     "e": 3.813
+    }
+   ]
+  },
+  {
+   "text": "I left for work every morning, and came home at exactly six PM.",
+   "start": 7.052,
+   "dur": 5.652,
+   "file": "line_03.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.264
+    },
+    {
+     "w": "left",
+     "s": 0.264,
+     "e": 0.693
+    },
+    {
+     "w": "for",
+     "s": 0.693,
+     "e": 1.05
+    },
+    {
+     "w": "work",
+     "s": 1.05,
+     "e": 1.479
+    },
+    {
+     "w": "every",
+     "s": 1.479,
+     "e": 1.979
+    },
+    {
+     "w": "morning,",
+     "s": 1.979,
+     "e": 2.694
+    },
+    {
+     "w": "and",
+     "s": 2.694,
+     "e": 3.051
+    },
+    {
+     "w": "came",
+     "s": 3.051,
+     "e": 3.48
+    },
+    {
+     "w": "home",
+     "s": 3.48,
+     "e": 3.909
+    },
+    {
+     "w": "at",
+     "s": 3.909,
+     "e": 4.194
+    },
+    {
+     "w": "exactly",
+     "s": 4.194,
+     "e": 4.838
+    },
+    {
+     "w": "six",
+     "s": 4.838,
+     "e": 5.195
+    },
+    {
+     "w": "PM.",
+     "s": 5.195,
+     "e": 5.552
+    }
+   ]
+  },
+  {
+   "text": "I never spoke to my neighbours.",
+   "start": 13.204,
+   "dur": 2.609,
+   "file": "line_04.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.244
+    },
+    {
+     "w": "never",
+     "s": 0.244,
+     "e": 0.697
+    },
+    {
+     "w": "spoke",
+     "s": 0.697,
+     "e": 1.15
+    },
+    {
+     "w": "to",
+     "s": 1.15,
+     "e": 1.409
+    },
+    {
+     "w": "my",
+     "s": 1.409,
+     "e": 1.668
+    },
+    {
+     "w": "neighbours.",
+     "s": 1.668,
+     "e": 2.509
+    }
+   ]
+  },
+  {
+   "text": "But tonight... a car I had never seen before... stopped outside my house.",
+   "start": 17.213,
+   "dur": 5.652,
+   "file": "line_05.mp3",
+   "tag": "cut",
+   "tags": [
+    "cut"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "But",
+     "s": 0.05,
+     "e": 0.366
+    },
+    {
+     "w": "tonight...",
+     "s": 0.366,
+     "e": 1.125
+    },
+    {
+     "w": "a",
+     "s": 1.125,
+     "e": 1.315
+    },
+    {
+     "w": "car",
+     "s": 1.315,
+     "e": 1.631
+    },
+    {
+     "w": "I",
+     "s": 1.631,
+     "e": 1.821
+    },
+    {
+     "w": "had",
+     "s": 1.821,
+     "e": 2.137
+    },
+    {
+     "w": "never",
+     "s": 2.137,
+     "e": 2.58
+    },
+    {
+     "w": "seen",
+     "s": 2.58,
+     "e": 2.959
+    },
+    {
+     "w": "before...",
+     "s": 2.959,
+     "e": 3.655
+    },
+    {
+     "w": "stopped",
+     "s": 3.655,
+     "e": 4.224
+    },
+    {
+     "w": "outside",
+     "s": 4.224,
+     "e": 4.793
+    },
+    {
+     "w": "my",
+     "s": 4.793,
+     "e": 5.046
+    },
+    {
+     "w": "house.",
+     "s": 5.046,
+     "e": 5.552
+    }
+   ]
+  },
+  {
+   "text": "The engine stayed running.",
+   "start": 23.865,
+   "dur": 1.739,
+   "file": "line_06.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "The",
+     "s": 0.05,
+     "e": 0.306
+    },
+    {
+     "w": "engine",
+     "s": 0.306,
+     "e": 0.716
+    },
+    {
+     "w": "stayed",
+     "s": 0.716,
+     "e": 1.127
+    },
+    {
+     "w": "running.",
+     "s": 1.127,
+     "e": 1.639
+    }
+   ]
+  },
+  {
+   "text": "And the driver... already knew my name.",
+   "start": 26.804,
+   "dur": 3.043,
+   "file": "line_07.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "And",
+     "s": 0.05,
+     "e": 0.358
+    },
+    {
+     "w": "the",
+     "s": 0.358,
+     "e": 0.666
+    },
+    {
+     "w": "driver...",
+     "s": 0.666,
+     "e": 1.343
+    },
+    {
+     "w": "already",
+     "s": 1.343,
+     "e": 1.897
+    },
+    {
+     "w": "knew",
+     "s": 1.897,
+     "e": 2.266
+    },
+    {
+     "w": "my",
+     "s": 2.266,
+     "e": 2.513
+    },
+    {
+     "w": "name.",
+     "s": 2.513,
+     "e": 2.943
+    }
+   ]
+  }
+ ]
+}

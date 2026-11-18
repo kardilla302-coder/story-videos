@@ -1,0 +1,1361 @@
+{
+ "fps": 30,
+ "total": 93.536,
+ "totalFrames": 2807,
+ "cutFrame": 1684,
+ "hasAudio": true,
+ "theme": "dusk",
+ "sfx": false,
+ "title": "I WASN'T ALONE",
+ "subtitle": "PART 1",
+ "endtext": "PART 2",
+ "highlight": [
+  "footsteps",
+  "nobody",
+  "don't turn around",
+  "again",
+  "Daniel"
+ ],
+ "tags": {
+  "tonight": 10.04,
+  "steps": 11.923,
+  "stop": 18.662,
+  "walk": 23.088,
+  "turn": 27.319,
+  "nobody": 29.48,
+  "relief": 31.323,
+  "resume": 34.573,
+  "lamps": 37.752,
+  "fast": 46.718,
+  "near": 50.385,
+  "breath": 55.707,
+  "lean": 59.879,
+  "whisper": 63.211,
+  "thing": 63.211,
+  "again": 66.078,
+  "name": 71.993,
+  "nk": 74.62,
+  "final": 78.94,
+  "lastturn": 82.272,
+  "endline": 85.798
+ },
+ "lines": [
+  {
+   "text": "I walk home the same way every night.",
+   "start": 0.5,
+   "dur": 2.301,
+   "file": "line_01.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.19
+    },
+    {
+     "w": "walk",
+     "s": 0.19,
+     "e": 0.471
+    },
+    {
+     "w": "home",
+     "s": 0.471,
+     "e": 0.752
+    },
+    {
+     "w": "the",
+     "s": 0.752,
+     "e": 0.985
+    },
+    {
+     "w": "same",
+     "s": 0.985,
+     "e": 1.266
+    },
+    {
+     "w": "way",
+     "s": 1.266,
+     "e": 1.5
+    },
+    {
+     "w": "every",
+     "s": 1.5,
+     "e": 1.827
+    },
+    {
+     "w": "night.",
+     "s": 1.827,
+     "e": 2.201
+    }
+   ]
+  },
+  {
+   "text": "Same road. Same houses. Same streetlights.",
+   "start": 3.301,
+   "dur": 2.954,
+   "file": "line_02.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "Same",
+     "s": 0.05,
+     "e": 0.393
+    },
+    {
+     "w": "road.",
+     "s": 0.393,
+     "e": 0.794
+    },
+    {
+     "w": "Same",
+     "s": 0.794,
+     "e": 1.137
+    },
+    {
+     "w": "houses.",
+     "s": 1.137,
+     "e": 1.653
+    },
+    {
+     "w": "Same",
+     "s": 1.653,
+     "e": 1.996
+    },
+    {
+     "w": "streetlights.",
+     "s": 1.996,
+     "e": 2.854
+    }
+   ]
+  },
+  {
+   "text": "I like it that way. Nothing ever changes.",
+   "start": 6.756,
+   "dur": 2.484,
+   "file": "line_03.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.19
+    },
+    {
+     "w": "like",
+     "s": 0.19,
+     "e": 0.47
+    },
+    {
+     "w": "it",
+     "s": 0.47,
+     "e": 0.657
+    },
+    {
+     "w": "that",
+     "s": 0.657,
+     "e": 0.937
+    },
+    {
+     "w": "way.",
+     "s": 0.937,
+     "e": 1.217
+    },
+    {
+     "w": "Nothing",
+     "s": 1.217,
+     "e": 1.637
+    },
+    {
+     "w": "ever",
+     "s": 1.637,
+     "e": 1.917
+    },
+    {
+     "w": "changes.",
+     "s": 1.917,
+     "e": 2.384
+    }
+   ]
+  },
+  {
+   "text": "Until tonight.",
+   "start": 10.04,
+   "dur": 1.283,
+   "file": "line_04.mp3",
+   "tag": "tonight",
+   "tags": [
+    "tonight"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Until",
+     "s": 0.05,
+     "e": 0.516
+    },
+    {
+     "w": "tonight.",
+     "s": 0.516,
+     "e": 1.183
+    }
+   ]
+  },
+  {
+   "text": "Halfway down the street, I heard footsteps behind me.",
+   "start": 11.923,
+   "dur": 2.902,
+   "file": "line_05.mp3",
+   "tag": "steps",
+   "tags": [
+    "steps"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Halfway",
+     "s": 0.05,
+     "e": 0.443
+    },
+    {
+     "w": "down",
+     "s": 0.443,
+     "e": 0.705
+    },
+    {
+     "w": "the",
+     "s": 0.705,
+     "e": 0.924
+    },
+    {
+     "w": "street,",
+     "s": 0.924,
+     "e": 1.317
+    },
+    {
+     "w": "I",
+     "s": 1.317,
+     "e": 1.448
+    },
+    {
+     "w": "heard",
+     "s": 1.448,
+     "e": 1.754
+    },
+    {
+     "w": "footsteps",
+     "s": 1.754,
+     "e": 2.234
+    },
+    {
+     "w": "behind",
+     "s": 2.234,
+     "e": 2.584
+    },
+    {
+     "w": "me.",
+     "s": 2.584,
+     "e": 2.802
+    }
+   ]
+  },
+  {
+   "text": "Slow. Heavy. Perfectly in time with mine.",
+   "start": 15.325,
+   "dur": 2.537,
+   "file": "line_06.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "Slow.",
+     "s": 0.05,
+     "e": 0.391
+    },
+    {
+     "w": "Heavy.",
+     "s": 0.391,
+     "e": 0.781
+    },
+    {
+     "w": "Perfectly",
+     "s": 0.781,
+     "e": 1.316
+    },
+    {
+     "w": "in",
+     "s": 1.316,
+     "e": 1.511
+    },
+    {
+     "w": "time",
+     "s": 1.511,
+     "e": 1.803
+    },
+    {
+     "w": "with",
+     "s": 1.803,
+     "e": 2.096
+    },
+    {
+     "w": "mine.",
+     "s": 2.096,
+     "e": 2.437
+    }
+   ]
+  },
+  {
+   "text": "I stopped.",
+   "start": 18.662,
+   "dur": 1.048,
+   "file": "line_07.mp3",
+   "tag": "stop",
+   "tags": [
+    "stop"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.257
+    },
+    {
+     "w": "stopped.",
+     "s": 0.257,
+     "e": 0.948
+    }
+   ]
+  },
+  {
+   "text": "The footsteps stopped too.",
+   "start": 20.509,
+   "dur": 1.779,
+   "file": "line_08.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "The",
+     "s": 0.05,
+     "e": 0.313
+    },
+    {
+     "w": "footsteps",
+     "s": 0.313,
+     "e": 0.891
+    },
+    {
+     "w": "stopped",
+     "s": 0.891,
+     "e": 1.364
+    },
+    {
+     "w": "too.",
+     "s": 1.364,
+     "e": 1.679
+    }
+   ]
+  },
+  {
+   "text": "So I started walking again.",
+   "start": 23.088,
+   "dur": 1.648,
+   "file": "line_09.mp3",
+   "tag": "walk",
+   "tags": [
+    "walk"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "So",
+     "s": 0.05,
+     "e": 0.232
+    },
+    {
+     "w": "I",
+     "s": 0.232,
+     "e": 0.368
+    },
+    {
+     "w": "started",
+     "s": 0.368,
+     "e": 0.776
+    },
+    {
+     "w": "walking",
+     "s": 0.776,
+     "e": 1.185
+    },
+    {
+     "w": "again.",
+     "s": 1.185,
+     "e": 1.548
+    }
+   ]
+  },
+  {
+   "text": "And so did they.",
+   "start": 25.237,
+   "dur": 1.283,
+   "file": "line_10.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "And",
+     "s": 0.05,
+     "e": 0.32
+    },
+    {
+     "w": "so",
+     "s": 0.32,
+     "e": 0.535
+    },
+    {
+     "w": "did",
+     "s": 0.535,
+     "e": 0.805
+    },
+    {
+     "w": "they.",
+     "s": 0.805,
+     "e": 1.183
+    }
+   ]
+  },
+  {
+   "text": "I turned around\u2026",
+   "start": 27.319,
+   "dur": 1.361,
+   "file": "line_11.mp3",
+   "tag": "turn",
+   "tags": [
+    "turn"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.232
+    },
+    {
+     "w": "turned",
+     "s": 0.232,
+     "e": 0.716
+    },
+    {
+     "w": "around\u2026",
+     "s": 0.716,
+     "e": 1.261
+    }
+   ]
+  },
+  {
+   "text": "Nobody.",
+   "start": 29.48,
+   "dur": 0.943,
+   "file": "line_12.mp3",
+   "tag": "nobody",
+   "tags": [
+    "nobody"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Nobody.",
+     "s": 0.05,
+     "e": 0.843
+    }
+   ]
+  },
+  {
+   "text": "I laughed. Out loud. Like an idiot.",
+   "start": 31.323,
+   "dur": 2.249,
+   "file": "line_13.mp3",
+   "tag": "relief",
+   "tags": [
+    "relief"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.196
+    },
+    {
+     "w": "laughed.",
+     "s": 0.196,
+     "e": 0.685
+    },
+    {
+     "w": "Out",
+     "s": 0.685,
+     "e": 0.929
+    },
+    {
+     "w": "loud.",
+     "s": 0.929,
+     "e": 1.27
+    },
+    {
+     "w": "Like",
+     "s": 1.27,
+     "e": 1.563
+    },
+    {
+     "w": "an",
+     "s": 1.563,
+     "e": 1.759
+    },
+    {
+     "w": "idiot.",
+     "s": 1.759,
+     "e": 2.149
+    }
+   ]
+  },
+  {
+   "text": "So I turned back around, and kept walking.",
+   "start": 34.573,
+   "dur": 2.38,
+   "file": "line_14.mp3",
+   "tag": "resume",
+   "tags": [
+    "resume"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "So",
+     "s": 0.05,
+     "e": 0.225
+    },
+    {
+     "w": "I",
+     "s": 0.225,
+     "e": 0.356
+    },
+    {
+     "w": "turned",
+     "s": 0.356,
+     "e": 0.706
+    },
+    {
+     "w": "back",
+     "s": 0.706,
+     "e": 0.968
+    },
+    {
+     "w": "around,",
+     "s": 0.968,
+     "e": 1.362
+    },
+    {
+     "w": "and",
+     "s": 1.362,
+     "e": 1.58
+    },
+    {
+     "w": "kept",
+     "s": 1.58,
+     "e": 1.843
+    },
+    {
+     "w": "walking.",
+     "s": 1.843,
+     "e": 2.28
+    }
+   ]
+  },
+  {
+   "text": "That's when the streetlights behind me started going out.",
+   "start": 37.752,
+   "dur": 2.902,
+   "file": "line_15.mp3",
+   "tag": "lamps",
+   "tags": [
+    "lamps"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "That's",
+     "s": 0.05,
+     "e": 0.379
+    },
+    {
+     "w": "when",
+     "s": 0.379,
+     "e": 0.625
+    },
+    {
+     "w": "the",
+     "s": 0.625,
+     "e": 0.83
+    },
+    {
+     "w": "streetlights",
+     "s": 0.83,
+     "e": 1.406
+    },
+    {
+     "w": "behind",
+     "s": 1.406,
+     "e": 1.734
+    },
+    {
+     "w": "me",
+     "s": 1.734,
+     "e": 1.899
+    },
+    {
+     "w": "started",
+     "s": 1.899,
+     "e": 2.268
+    },
+    {
+     "w": "going",
+     "s": 2.268,
+     "e": 2.556
+    },
+    {
+     "w": "out.",
+     "s": 2.556,
+     "e": 2.802
+    }
+   ]
+  },
+  {
+   "text": "One by one.",
+   "start": 41.155,
+   "dur": 1.126,
+   "file": "line_16.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "One",
+     "s": 0.05,
+     "e": 0.375
+    },
+    {
+     "w": "by",
+     "s": 0.375,
+     "e": 0.636
+    },
+    {
+     "w": "one.",
+     "s": 0.636,
+     "e": 1.026
+    }
+   ]
+  },
+  {
+   "text": "Each one\u2026 closer than the last.",
+   "start": 42.781,
+   "dur": 3.137,
+   "file": "line_17.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "Each",
+     "s": 0.05,
+     "e": 0.522
+    },
+    {
+     "w": "one\u2026",
+     "s": 0.522,
+     "e": 0.993
+    },
+    {
+     "w": "closer",
+     "s": 0.993,
+     "e": 1.622
+    },
+    {
+     "w": "than",
+     "s": 1.622,
+     "e": 2.094
+    },
+    {
+     "w": "the",
+     "s": 2.094,
+     "e": 2.487
+    },
+    {
+     "w": "last.",
+     "s": 2.487,
+     "e": 3.037
+    }
+   ]
+  },
+  {
+   "text": "I walked faster. So did the footsteps.",
+   "start": 46.718,
+   "dur": 2.667,
+   "file": "line_18.mp3",
+   "tag": "fast",
+   "tags": [
+    "fast"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.214
+    },
+    {
+     "w": "walked",
+     "s": 0.214,
+     "e": 0.652
+    },
+    {
+     "w": "faster.",
+     "s": 0.652,
+     "e": 1.144
+    },
+    {
+     "w": "So",
+     "s": 1.144,
+     "e": 1.363
+    },
+    {
+     "w": "did",
+     "s": 1.363,
+     "e": 1.637
+    },
+    {
+     "w": "the",
+     "s": 1.637,
+     "e": 1.91
+    },
+    {
+     "w": "footsteps.",
+     "s": 1.91,
+     "e": 2.567
+    }
+   ]
+  },
+  {
+   "text": "I could feel something right behind me. Closer than anyone should ever stand.",
+   "start": 50.385,
+   "dur": 4.522,
+   "file": "line_19.mp3",
+   "tag": "near",
+   "tags": [
+    "near"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.194
+    },
+    {
+     "w": "could",
+     "s": 0.194,
+     "e": 0.53
+    },
+    {
+     "w": "feel",
+     "s": 0.53,
+     "e": 0.819
+    },
+    {
+     "w": "something",
+     "s": 0.819,
+     "e": 1.347
+    },
+    {
+     "w": "right",
+     "s": 1.347,
+     "e": 1.683
+    },
+    {
+     "w": "behind",
+     "s": 1.683,
+     "e": 2.068
+    },
+    {
+     "w": "me.",
+     "s": 2.068,
+     "e": 2.308
+    },
+    {
+     "w": "Closer",
+     "s": 2.308,
+     "e": 2.692
+    },
+    {
+     "w": "than",
+     "s": 2.692,
+     "e": 2.981
+    },
+    {
+     "w": "anyone",
+     "s": 2.981,
+     "e": 3.365
+    },
+    {
+     "w": "should",
+     "s": 3.365,
+     "e": 3.749
+    },
+    {
+     "w": "ever",
+     "s": 3.749,
+     "e": 4.038
+    },
+    {
+     "w": "stand.",
+     "s": 4.038,
+     "e": 4.422
+    }
+   ]
+  },
+  {
+   "text": "Then I felt it. Cold breath, right against my neck.",
+   "start": 55.707,
+   "dur": 3.372,
+   "file": "line_20.mp3",
+   "tag": "breath",
+   "tags": [
+    "breath"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Then",
+     "s": 0.05,
+     "e": 0.362
+    },
+    {
+     "w": "I",
+     "s": 0.362,
+     "e": 0.518
+    },
+    {
+     "w": "felt",
+     "s": 0.518,
+     "e": 0.83
+    },
+    {
+     "w": "it.",
+     "s": 0.83,
+     "e": 1.089
+    },
+    {
+     "w": "Cold",
+     "s": 1.089,
+     "e": 1.401
+    },
+    {
+     "w": "breath,",
+     "s": 1.401,
+     "e": 1.869
+    },
+    {
+     "w": "right",
+     "s": 1.869,
+     "e": 2.233
+    },
+    {
+     "w": "against",
+     "s": 2.233,
+     "e": 2.701
+    },
+    {
+     "w": "my",
+     "s": 2.701,
+     "e": 2.909
+    },
+    {
+     "w": "neck.",
+     "s": 2.909,
+     "e": 3.272
+    }
+   ]
+  },
+  {
+   "text": "Something leaned down beside my ear.",
+   "start": 59.879,
+   "dur": 2.432,
+   "file": "line_21.mp3",
+   "tag": "lean",
+   "tags": [
+    "lean"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Something",
+     "s": 0.05,
+     "e": 0.634
+    },
+    {
+     "w": "leaned",
+     "s": 0.634,
+     "e": 1.058
+    },
+    {
+     "w": "down",
+     "s": 1.058,
+     "e": 1.377
+    },
+    {
+     "w": "beside",
+     "s": 1.377,
+     "e": 1.801
+    },
+    {
+     "w": "my",
+     "s": 1.801,
+     "e": 2.014
+    },
+    {
+     "w": "ear.",
+     "s": 2.014,
+     "e": 2.332
+    }
+   ]
+  },
+  {
+   "text": "Don't turn around again.",
+   "start": 63.211,
+   "dur": 2.066,
+   "file": "line_22.mp3",
+   "tag": "whisper",
+   "tags": [
+    "whisper",
+    "thing"
+   ],
+   "thing": true,
+   "words": [
+    {
+     "w": "Don't",
+     "s": 0.05,
+     "e": 0.513
+    },
+    {
+     "w": "turn",
+     "s": 0.513,
+     "e": 0.909
+    },
+    {
+     "w": "around",
+     "s": 0.909,
+     "e": 1.438
+    },
+    {
+     "w": "again.",
+     "s": 1.438,
+     "e": 1.966
+    }
+   ]
+  },
+  {
+   "text": "Again.",
+   "start": 66.078,
+   "dur": 0.943,
+   "file": "line_23.mp3",
+   "tag": "again",
+   "tags": [
+    "again"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Again.",
+     "s": 0.05,
+     "e": 0.843
+    }
+   ]
+  },
+  {
+   "text": "It had seen me do it. It had been there the whole time.",
+   "start": 67.621,
+   "dur": 3.372,
+   "file": "line_24.mp3",
+   "tag": null,
+   "tags": [],
+   "thing": false,
+   "words": [
+    {
+     "w": "It",
+     "s": 0.05,
+     "e": 0.237
+    },
+    {
+     "w": "had",
+     "s": 0.237,
+     "e": 0.47
+    },
+    {
+     "w": "seen",
+     "s": 0.47,
+     "e": 0.751
+    },
+    {
+     "w": "me",
+     "s": 0.751,
+     "e": 0.937
+    },
+    {
+     "w": "do",
+     "s": 0.937,
+     "e": 1.124
+    },
+    {
+     "w": "it.",
+     "s": 1.124,
+     "e": 1.358
+    },
+    {
+     "w": "It",
+     "s": 1.358,
+     "e": 1.544
+    },
+    {
+     "w": "had",
+     "s": 1.544,
+     "e": 1.778
+    },
+    {
+     "w": "been",
+     "s": 1.778,
+     "e": 2.058
+    },
+    {
+     "w": "there",
+     "s": 2.058,
+     "e": 2.385
+    },
+    {
+     "w": "the",
+     "s": 2.385,
+     "e": 2.619
+    },
+    {
+     "w": "whole",
+     "s": 2.619,
+     "e": 2.946
+    },
+    {
+     "w": "time.",
+     "s": 2.946,
+     "e": 3.272
+    }
+   ]
+  },
+  {
+   "text": "Hello, Daniel.",
+   "start": 71.993,
+   "dur": 1.727,
+   "file": "line_25.mp3",
+   "tag": "name",
+   "tags": [
+    "name",
+    "thing"
+   ],
+   "thing": true,
+   "words": [
+    {
+     "w": "Hello,",
+     "s": 0.05,
+     "e": 0.792
+    },
+    {
+     "w": "Daniel.",
+     "s": 0.792,
+     "e": 1.627
+    }
+   ]
+  },
+  {
+   "text": "Nobody in this town knows that name. Not anymore.",
+   "start": 74.62,
+   "dur": 3.32,
+   "file": "line_26.mp3",
+   "tag": "nk",
+   "tags": [
+    "nk"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "Nobody",
+     "s": 0.05,
+     "e": 0.48
+    },
+    {
+     "w": "in",
+     "s": 0.48,
+     "e": 0.695
+    },
+    {
+     "w": "this",
+     "s": 0.695,
+     "e": 1.017
+    },
+    {
+     "w": "town",
+     "s": 1.017,
+     "e": 1.34
+    },
+    {
+     "w": "knows",
+     "s": 1.34,
+     "e": 1.716
+    },
+    {
+     "w": "that",
+     "s": 1.716,
+     "e": 2.038
+    },
+    {
+     "w": "name.",
+     "s": 2.038,
+     "e": 2.414
+    },
+    {
+     "w": "Not",
+     "s": 2.414,
+     "e": 2.683
+    },
+    {
+     "w": "anymore.",
+     "s": 2.683,
+     "e": 3.22
+    }
+   ]
+  },
+  {
+   "text": "So I did the one thing it told me not to.",
+   "start": 78.94,
+   "dur": 2.432,
+   "file": "line_27.mp3",
+   "tag": "final",
+   "tags": [
+    "final"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "So",
+     "s": 0.05,
+     "e": 0.222
+    },
+    {
+     "w": "I",
+     "s": 0.222,
+     "e": 0.351
+    },
+    {
+     "w": "did",
+     "s": 0.351,
+     "e": 0.567
+    },
+    {
+     "w": "the",
+     "s": 0.567,
+     "e": 0.782
+    },
+    {
+     "w": "one",
+     "s": 0.782,
+     "e": 0.997
+    },
+    {
+     "w": "thing",
+     "s": 0.997,
+     "e": 1.299
+    },
+    {
+     "w": "it",
+     "s": 1.299,
+     "e": 1.471
+    },
+    {
+     "w": "told",
+     "s": 1.471,
+     "e": 1.729
+    },
+    {
+     "w": "me",
+     "s": 1.729,
+     "e": 1.901
+    },
+    {
+     "w": "not",
+     "s": 1.901,
+     "e": 2.117
+    },
+    {
+     "w": "to.",
+     "s": 2.117,
+     "e": 2.332
+    }
+   ]
+  },
+  {
+   "text": "I turned around.",
+   "start": 82.272,
+   "dur": 1.126,
+   "file": "line_28.mp3",
+   "tag": "lastturn",
+   "tags": [
+    "lastturn"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "I",
+     "s": 0.05,
+     "e": 0.196
+    },
+    {
+     "w": "turned",
+     "s": 0.196,
+     "e": 0.587
+    },
+    {
+     "w": "around.",
+     "s": 0.587,
+     "e": 1.026
+    }
+   ]
+  },
+  {
+   "text": "What I saw\u2026 is why I never walk that street again.",
+   "start": 85.798,
+   "dur": 3.738,
+   "file": "line_29.mp3",
+   "tag": "endline",
+   "tags": [
+    "endline"
+   ],
+   "thing": false,
+   "words": [
+    {
+     "w": "What",
+     "s": 0.05,
+     "e": 0.397
+    },
+    {
+     "w": "I",
+     "s": 0.397,
+     "e": 0.571
+    },
+    {
+     "w": "saw\u2026",
+     "s": 0.571,
+     "e": 0.918
+    },
+    {
+     "w": "is",
+     "s": 0.918,
+     "e": 1.15
+    },
+    {
+     "w": "why",
+     "s": 1.15,
+     "e": 1.439
+    },
+    {
+     "w": "I",
+     "s": 1.439,
+     "e": 1.613
+    },
+    {
+     "w": "never",
+     "s": 1.613,
+     "e": 2.018
+    },
+    {
+     "w": "walk",
+     "s": 2.018,
+     "e": 2.365
+    },
+    {
+     "w": "that",
+     "s": 2.365,
+     "e": 2.712
+    },
+    {
+     "w": "street",
+     "s": 2.712,
+     "e": 3.175
+    },
+    {
+     "w": "again.",
+     "s": 3.175,
+     "e": 3.638
+    }
+   ]
+  }
+ ],
+ "plan": {
+  "walk": [
+   [
+    0.0,
+    18.812
+   ],
+   [
+    23.338,
+    27.369
+   ],
+   [
+    34.573,
+    55.807
+   ]
+  ],
+  "boost": [
+   46.718,
+   0.4
+  ],
+  "turn": [
+   27.419,
+   28.419
+  ],
+  "returnTurn": [
+   33.673,
+   34.473
+  ],
+  "lastTurn": [
+   82.372,
+   83.672
+  ],
+  "follower": [
+   [
+    11.923,
+    19.062
+   ],
+   [
+    23.338,
+    27.369
+   ],
+   [
+    34.573,
+    56.507
+   ]
+  ]
+ }
+}

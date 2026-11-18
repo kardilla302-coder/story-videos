@@ -1,0 +1,50 @@
+provider: elevenlabs
+voice: Brian
+model: eleven_multilingual_v2
+stability: 0.4
+style: 0.35
+speed: 0.92
+thing_voice: Callum
+thing_stability: 0.25
+thing_style: 0.7
+thing_speed: 0.8
+theme: dusk
+story: alone
+sfx: off
+tail: 4.0
+title: I WASN'T ALONE
+subtitle: PART 1
+endtext: PART 2
+highlight: footsteps, nobody, don't turn around, again, Daniel
+---
+# tags (@steps, @stop...) tell the camera and the actors what to do on that line.
+# @thing = the creature speaks this line (different voice, red caption).
+0.5 | I walk home the same way every night.
+0.5 | Same road. Same houses. Same streetlights.
+0.5 | I like it that way. Nothing ever changes.
+@tonight 0.8 | Until tonight.
+@steps 0.6 | Halfway down the street, I heard footsteps behind me.
+0.5 | Slow. Heavy. Perfectly in time with mine.
+@stop 0.8 | I stopped.
+0.8 | The footsteps stopped too.
+@walk 0.8 | So I started walking again.
+0.5 | And so did they.
+@turn 0.8 | I turned around…
+@nobody 0.8 | Nobody.
+@relief 0.9 | I laughed. Out loud. Like an idiot.
+@resume 1.0 | So I turned back around, and kept walking.
+@lamps 0.8 | That's when the streetlights behind me started going out.
+0.5 | One by one.
+0.5 | Each one… closer than the last.
+@fast 0.8 | I walked faster. So did the footsteps.
+@near 1.0 | I could feel something right behind me. Closer than anyone should ever stand.
+@breath 0.8 | Then I felt it. Cold breath, right against my neck.
+@lean 0.8 | Something leaned down beside my ear.
+@whisper @thing 0.9 | Don't turn around again.
+@again 0.8 | Again.
+0.6 | It had seen me do it. It had been there the whole time.
+@name @thing 1.0 | Hello, Daniel.
+@nk 0.9 | Nobody in this town knows that name. Not anymore.
+@final 1.0 | So I did the one thing it told me not to.
+@lastturn 0.9 | I turned around.
+@endline 2.4 | What I saw… is why I never walk that street again.
