@@ -1,0 +1,2866 @@
+PROJECT DUMP
+
+=== FILE: check.sh ===
+#!/bin/bash
+cd "$(dirname "$0")"
+OUT=$(npx tsc --noEmit 2>&1 | grep "src/studio" | grep -v TS6133)
+if [ -z "$OUT" ]; then echo "CHECK_OK"; else echo "$OUT"; exit 1; fi
+
+=== FILE: dump.sh ===
+#!/bin/bash
+# usage: ./dump.sh   -> out/project_dump.txt  (all of the project's own code and scripts in ONE file)
+mkdir -p out
+OUT=out/project_dump.txt
+echo "PROJECT DUMP  $(date)" > "$OUT"
+echo "--- recent changes ---" >> "$OUT"
+git log --oneline 2>/dev/null | head -15 >> "$OUT"
+for f in package.json remotion.config.ts tsconfig.json src/studio/index.ts src/studio/Root.tsx src/studio/kit.tsx \
+  src/studio/world.tsx src/studio/stalker.tsx src/studio/motion.ts src/studio/captions.tsx src/studio/narration.tsx \
+  src/studio/stories/*.tsx tools/*.py script/*.txt *.sh; do
+  if [ -f "$f" ]; then
+    echo "" >> "$OUT"
+    echo "=================== FILE: $f ===================" >> "$OUT"
+    cat "$f" >> "$OUT"
+  fi
+done
+echo "Saved $OUT ($(wc -l < "$OUT") lines, $(du -h "$OUT" | cut -f1))"
+
+=== FILE: make.sh ===
+#!/bin/bash
+# usage: ./make.sh Daniel   ->  out/Daniel.mp4
+npx remotion render src/studio/index.ts "$1" "out/$1.mp4" --gl=swangle
+
+=== FILE: new.sh ===
+#!/bin/bash
+# usage: ./new.sh Night   ->  creates + registers a new story called Night
+N="$1"
+[ -z "$N" ] && { echo "usage: ./new.sh Name"; exit 1; }
+sed "s/StoryName/$N/g" src/studio/stories/_Template.tsx > "src/studio/stories/$N.tsx"
+sed -i "1i import {$N} from './stories/$N';" src/studio/Root.tsx
+sed -i "s|  // add new stories here|  {id: '$N', component: $N, frames: 300},\n  // add new stories here|" src/studio/Root.tsx
+echo "Created src/studio/stories/$N.tsx and registered it."
+
+=== FILE: package.json ===
+{
+  "name": "my-video",
+  "version": "1.0.0",
+  "description": "My Remotion video",
+  "repository": {},
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "private": true,
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "@remotion/cli": "^4.0.543",
+    "@remotion/three": "^4.0.543",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.543",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.543",
+    "@types/react": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "@types/web": "0.0.166",
+    "eslint": "10.12.0",
+    "prettier": "3.8.1",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc"
+  },
+  "allowScripts": {
+    "esbuild": false
+  }
+}
+
+=== FILE: peek.sh ===
+#!/bin/bash
+# usage: ./peek.sh Alone 71.5   -> out/peek_71.5.png  (one picture from that second of the video)
+mkdir -p out
+npx remotion still src/studio/index.ts "$1" "out/peek_$2.png" --frame="$(python3 -c "print(round($2 * 30))")" --gl=swangle
+
+=== FILE: remotion.config.ts ===
+/**
+ * Note: When using the Node.JS APIs, the config file
+ * doesn't apply. Instead, pass options directly to the APIs.
+ *
+ * All configuration options: https://remotion.dev/docs/config
+ */
+
+import { Config } from "@remotion/cli/config";
+
+Config.setRspack(true);
+Config.setVideoImageFormat("jpeg");
+Config.setOverwriteOutput(true);
+Config.setDefaultPremountInSeconds(2);
+
+=== FILE: script/Alone.txt ===
+provider: elevenlabs
+voice: Brian
+model: eleven_multilingual_v2
+stability: 0.4
+style: 0.35
+speed: 0.92
+thing_voice: Callum
+thing_stability: 0.25
+thing_style: 0.7
+thing_speed: 0.8
+theme: dusk
+story: alone
+sfx: off
+tail: 4.0
+title: I WASN'T ALONE
+subtitle: PART 1
+endtext: PART 2
+highlight: footsteps, nobody, don't turn around, again, Daniel
+---
+# tags (@steps, @stop...) tell the camera and the actors what to do on that line.
+# @thing = the creature speaks this line (different voice, red caption).
+0.5 | I walk home the same way every night.
+0.5 | Same road. Same houses. Same streetlights.
+0.5 | I like it that way. Nothing ever changes.
+@tonight 0.8 | Until tonight.
+@steps 0.6 | Halfway down the street, I heard footsteps behind me.
+0.5 | Slow. Heavy. Perfectly in time with mine.
+@stop 0.8 | I stopped.
+0.8 | The footsteps stopped too.
+@walk 0.8 | So I started walking again.
+0.5 | And so did they.
+@turn 0.8 | I turned around…
+@nobody 0.8 | Nobody.
+@relief 0.9 | I laughed. Out loud. Like an idiot.
+@resume 1.0 | So I turned back around, and kept walking.
+@lamps 0.8 | That's when the streetlights behind me started going out.
+0.5 | One by one.
+0.5 | Each one… closer than the last.
+@fast 0.8 | I walked faster. So did the footsteps.
+@near 1.0 | I could feel something right behind me. Closer than anyone should ever stand.
+@breath 0.8 | Then I felt it. Cold breath, right against my neck.
+@lean 0.8 | Something leaned down beside my ear.
+@whisper @thing 0.9 | Don't turn around again.
+@again 0.8 | Again.
+0.6 | It had seen me do it. It had been there the whole time.
+@name @thing 1.0 | Hello, Daniel.
+@nk 0.9 | Nobody in this town knows that name. Not anymore.
+@final 1.0 | So I did the one thing it told me not to.
+@lastturn 0.9 | I turned around.
+@endline 2.4 | What I saw… is why I never walk that street again.
+
+=== FILE: script/Alone_v1.txt ===
+provider: elevenlabs
+voice: Brian
+model: eleven_multilingual_v2
+stability: 0.4
+style: 0.35
+speed: 0.92
+theme: dusk
+story: alone
+sfx: off
+tail: 2.5
+title: I WASN'T ALONE
+highlight: footsteps, nobody, don't turn around
+---
+# cues (@steps, @stop, ...) tell the camera and Daniel what to do on that line
+0.5 | I walked home on the same street every night.
+0.6 | Same road. Same houses. Same streetlights.
+0.7 | But one night, something felt different.
+@steps 0.7 | I could hear footsteps behind me.
+@stop 0.8 | I stopped.
+0.9 | The footsteps stopped too.
+@walk 0.9 | I started walking again.
+0.5 | So did they.
+@turn 0.8 | I turned around…
+@nobody 0.9 | Nobody.
+@resume 1.2 | I laughed it off and kept going.
+0.7 | Then I heard a voice whisper right behind my ear:
+@whisper 0.8 | "Don't turn around again."
+@freeze 1.2 | I froze.
+0.8 | Because this time…
+0.8 | I could feel someone breathing on my neck.
+
+=== FILE: script/Daniel.txt ===
+provider: elevenlabs
+voice: Brian
+model: eleven_multilingual_v2
+stability: 0.4
+style: 0.35
+speed: 0.92
+theme: dusk
+sfx: off
+tail: 3.5
+---
+# theme can be: dusk, day, winter
+# format:  pause-before-line-in-seconds | what the narrator says
+# @cut = the line where the camera cuts to the car
+0.4 | Nobody knew my secret.
+0.5 | Everyone in town knew I was a quiet man.
+0.5 | I left for work every morning, and came home at exactly six PM.
+0.5 | I never spoke to my neighbours.
+@cut 1.4 | But tonight... a car I had never seen before... stopped outside my house.
+1.0 | The engine stayed running.
+1.2 | And the driver... already knew my name.
+
+=== FILE: src/studio/Root.tsx ===
+import React from 'react';
+import {Composition} from 'remotion';
+import {Alone} from './stories/Alone';
+import {Daniel} from './stories/Daniel';
+import {ThemeDay, ThemeDusk, ThemeWinter} from './stories/Themes';
+import {OrbitCar, OrbitDaniel, SheetCar, SheetHouse, SheetPerson} from './stories/Views';
+import aloneData from './data/Alone.json';
+import danielData from './data/Daniel.json';
+
+const stories = [
+  {id: 'Alone', component: Alone, frames: (aloneData as any).totalFrames},
+  {id: 'Daniel', component: Daniel, frames: (danielData as any).totalFrames},
+  {id: 'ThemeDusk', component: ThemeDusk, frames: 1},
+  {id: 'ThemeDay', component: ThemeDay, frames: 1},
+  {id: 'ThemeWinter', component: ThemeWinter, frames: 1},
+  {id: 'OrbitDaniel', component: OrbitDaniel, frames: 240},
+  {id: 'OrbitCar', component: OrbitCar, frames: 240},
+  {id: 'SheetPerson', component: SheetPerson, frames: 1, width: 1920, height: 1080},
+  {id: 'SheetCar', component: SheetCar, frames: 1, width: 1920, height: 1080},
+  {id: 'SheetHouse', component: SheetHouse, frames: 1, width: 1920, height: 1080},
+  // add new stories here
+];
+
+export const RemotionRoot: React.FC = () => (
+  <>
+    {stories.map((s) => (
+      <Composition
+        key={s.id}
+        id={s.id}
+        component={s.component}
+        durationInFrames={s.frames}
+        fps={30}
+        width={s.width ?? 1080}
+        height={s.height ?? 1920}
+      />
+    ))}
+  </>
+);
+
+=== FILE: src/studio/captions.tsx ===
+import React from 'react';
+import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+import {Line} from './narration';
+
+const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const pieces = (text: string, terms: string[]) => {
+  const list = terms.map((t) => t.trim()).filter(Boolean).sort((a, b) => b.length - a.length);
+  if (list.length === 0) return [{t: text, hl: false}];
+  const re = new RegExp('(' + list.map(esc).join('|') + ')', 'gi');
+  return text
+    .split(re)
+    .filter((s) => s !== '')
+    .map((s) => ({t: s, hl: list.some((l) => l.toLowerCase() === s.toLowerCase())}));
+};
+
+// White captions, key words in gold. When the creature speaks, the caption turns red and italic.
+export const HighlightCaptions: React.FC<{lines: Line[]; fps: number; terms: string[]}> = ({lines, fps, terms}) => {
+  const f = useCurrentFrame();
+  const now = f / fps;
+  const l = lines.find((x) => now >= x.start - 0.05 && now <= x.start + x.dur + 0.4);
+  if (!l) return null;
+  const thing = !!(l as any).thing;
+  const local = (now - l.start) * fps;
+  const end = l.dur * fps + 12;
+  const opacity = interpolate(local, [0, 6, end - 8, end], [0, 1, 1, 0], clamp);
+  return (
+    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 260}}>
+      <div
+        style={{
+          opacity,
+          color: thing ? '#ff8f86' : 'white',
+          fontStyle: thing ? 'italic' : 'normal',
+          fontSize: 72,
+          fontWeight: 800,
+          fontFamily: 'Arial, sans-serif',
+          textAlign: 'center',
+          padding: '0 70px',
+          lineHeight: 1.2,
+          textShadow: '0 4px 14px rgba(0,0,0,0.9), 0 0 4px black',
+        }}
+      >
+        {pieces(l.text, terms).map((p, i) => (
+          <span
+            key={i}
+            style={p.hl ? {color: '#ffd54a', fontSize: 86, textShadow: '0 4px 18px rgba(0,0,0,0.95), 0 0 12px rgba(255,170,0,0.5)'} : undefined}
+          >
+            {p.t}
+          </span>
+        ))}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+export const TitleCard: React.FC<{text: string; sub?: string; seconds: number; fps: number}> = ({text, sub, seconds, fps}) => {
+  const f = useCurrentFrame();
+  const end = seconds * fps;
+  const opacity = interpolate(f, [0, 8, end - 10, end], [0, 1, 1, 0], clamp);
+  if (!text || f > end) return null;
+  return (
+    <AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 250}}>
+      <div
+        style={{
+          opacity,
+          color: 'white',
+          fontSize: 112,
+          fontWeight: 900,
+          fontFamily: 'Arial, sans-serif',
+          textAlign: 'center',
+          padding: '0 60px',
+          lineHeight: 1.05,
+          textShadow: '0 6px 22px rgba(0,0,0,0.95), 0 0 6px black',
+        }}
+      >
+        {text}
+        {sub ? <div style={{fontSize: 60, marginTop: 18, color: '#ffd54a', letterSpacing: 6}}>{sub}</div> : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+export const EndCard: React.FC<{from: number; text: string; sub: string}> = ({from, text, sub}) => {
+  const f = useCurrentFrame();
+  if (f < from) return null;
+  const o = interpolate(f - from, [0, 14], [0, 1], clamp);
+  return (
+    <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', opacity: o}}>
+      <div
+        style={{
+          color: '#ffd54a',
+          fontSize: 130,
+          fontWeight: 900,
+          fontFamily: 'Arial, sans-serif',
+          textAlign: 'center',
+          textShadow: '0 6px 22px rgba(0,0,0,0.95)',
+        }}
+      >
+        {text}
+        <div style={{fontSize: 52, marginTop: 30, color: 'white', fontWeight: 700}}>{sub}</div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+=== FILE: src/studio/index.ts ===
+import {registerRoot} from 'remotion';
+import {RemotionRoot} from './Root';
+
+registerRoot(RemotionRoot);
+
+=== FILE: src/studio/kit.tsx ===
+import React, {useMemo} from 'react';
+import {AbsoluteFill, Easing, Sequence, interpolate, useCurrentFrame} from 'remotion';
+import {ThreeCanvas} from '@remotion/three';
+import {useThree} from '@react-three/fiber';
+import * as THREE from 'three';
+
+export const HORIZON = '#c9a66b';
+type V3 = [number, number, number];
+
+/* ---------- Captions ---------- */
+export const Caption: React.FC<{text: string; dur: number}> = ({text, dur}) => {
+  const f = useCurrentFrame();
+  const opacity = interpolate(f, [0, 8, dur - 8, dur], [0, 1, 1, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  return (
+    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 260}}>
+      <div
+        style={{
+          opacity,
+          color: 'white',
+          fontSize: 72,
+          fontWeight: 800,
+          fontFamily: 'Arial, sans-serif',
+          textAlign: 'center',
+          padding: '0 70px',
+          lineHeight: 1.2,
+          textShadow: '0 4px 14px rgba(0,0,0,0.9), 0 0 4px black',
+        }}
+      >
+        {text}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/* ---------- Camera ---------- */
+export const Rig: React.FC<{pos: V3; look: V3}> = ({pos, look}) => {
+  const camera = useThree((s) => s.camera);
+  camera.position.set(pos[0], pos[1], pos[2]);
+  camera.lookAt(look[0], look[1], look[2]);
+  return null;
+};
+
+// Orbit camera around a point. For Daniel (he faces -z): angle 0 = back view,
+// 180 = front view, 90 / 270 = the two side views.
+export const orbitCam = (target: V3, dist: number, angleDeg: number, height: number) => {
+  const a = (angleDeg * Math.PI) / 180;
+  const pos: V3 = [target[0] + Math.sin(a) * dist, height, target[2] + Math.cos(a) * dist];
+  return {pos, look: target};
+};
+
+/* ---------- Sky: gradient + low sun ---------- */
+export const Sky: React.FC = () => (
+  <group>
+    <mesh>
+      <sphereGeometry args={[180, 24, 16]} />
+      <shaderMaterial
+        side={THREE.BackSide}
+        depthWrite={false}
+        vertexShader={`
+          varying vec3 vDir;
+          void main() {
+            vDir = normalize(position);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `}
+        fragmentShader={`
+          varying vec3 vDir;
+          void main() {
+            float t = smoothstep(0.0, 0.5, vDir.y);
+            vec3 horizon = vec3(0.788, 0.651, 0.420);
+            vec3 top = vec3(0.40, 0.34, 0.40);
+            gl_FragColor = vec4(mix(horizon, top, t), 1.0);
+          }
+        `}
+      />
+    </mesh>
+    <mesh position={[0, 9, -150]}>
+      <circleGeometry args={[7, 32]} />
+      <meshBasicMaterial color="#ffe9b8" fog={false} />
+    </mesh>
+    <mesh position={[0, 9, -151]}>
+      <circleGeometry args={[26, 32]} />
+      <meshBasicMaterial color="#ffd9a0" transparent opacity={0.25} fog={false} depthWrite={false} />
+    </mesh>
+  </group>
+);
+
+/* ---------- House (front, back and both sides) ---------- */
+const WALLS = ['#8794a3', '#a89a84', '#76897c', '#9a7b6d', '#8c97ae', '#b0a58f'];
+const ROOFS = ['#2b2f3a', '#3d2b25', '#2f3a34', '#40363a'];
+
+export const House: React.FC<{x: number; z: number; idx: number; side: 1 | -1; full?: boolean}> = ({
+  x,
+  z,
+  idx,
+  side,
+  full = false,
+}) => {
+  const wall = WALLS[idx % WALLS.length];
+  const roof = ROOFS[(idx * 3 + 1) % ROOFS.length];
+  const H = 5.4;
+  const front = -side * 3.03; // street-facing wall
+  const back = side * 3.03; // back-yard wall
+  const rotFront = -side * (Math.PI / 2);
+  const rotBack = side * (Math.PI / 2);
+  const lit = (k: number) => (idx * 7 + k * 5) % 3 !== 0;
+  const win = (key: string, p: V3, ry: number, k: number) => (
+    <mesh key={key} position={p} rotation={[0, ry, 0]}>
+      <planeGeometry args={[1.1, 1.3]} />
+      <meshStandardMaterial
+        color={lit(k) ? '#ffd58a' : '#2a3140'}
+        emissive={lit(k) ? '#ffae42' : '#000000'}
+        emissiveIntensity={lit(k) ? 1.5 : 0}
+        roughness={0.4}
+      />
+    </mesh>
+  );
+  return (
+    <group position={[x, 0, z]}>
+      <mesh position={[0, H / 2, 0]}>
+        <boxGeometry args={[6, H, 7]} />
+        <meshStandardMaterial color={wall} roughness={0.95} />
+      </mesh>
+      <mesh position={[0, H + 0.73, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1, 1, 0.373]}>
+        <cylinderGeometry args={[3.93, 3.93, 7.6, 3]} />
+        <meshStandardMaterial color={roof} roughness={1} />
+      </mesh>
+      <mesh position={[side * 1.2, H + 1.6, 1.6]}>
+        <boxGeometry args={[0.7, 1.6, 0.7]} />
+        <meshStandardMaterial color="#5b4a45" roughness={1} />
+      </mesh>
+
+      {/* FRONT (street side) */}
+      {win('f1', [front, 1.8, -2.2], rotFront, 1)}
+      {win('f2', [front, 1.8, 2.2], rotFront, 2)}
+      {win('f3', [front, 4.0, -2.2], rotFront, 3)}
+      {win('f4', [front, 4.0, 0], rotFront, 4)}
+      {win('f5', [front, 4.0, 2.2], rotFront, 5)}
+      <mesh position={[-side * 3.05, 1.05, 0]}>
+        <boxGeometry args={[0.12, 2.1, 1.1]} />
+        <meshStandardMaterial color={idx % 2 ? '#5a2a26' : '#2a3a52'} roughness={0.8} />
+      </mesh>
+      <mesh position={[-side * 3.35, 0.08, 0]}>
+        <boxGeometry args={[0.8, 0.16, 1.5]} />
+        <meshStandardMaterial color="#8a8478" />
+      </mesh>
+      <mesh position={[-side * 3.1, 2.0, 0.95]}>
+        <boxGeometry args={[0.1, 0.22, 0.14]} />
+        <meshStandardMaterial color="#fff0c0" emissive="#ffc86a" emissiveIntensity={3} />
+      </mesh>
+      <mesh position={[-side * 3.5, 2.5, 0]}>
+        <boxGeometry args={[1.0, 0.1, 1.9]} />
+        <meshStandardMaterial color={roof} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-side * 4.9, 0.03, 0]}>
+        <planeGeometry args={[3.8, 1.3]} />
+        <meshStandardMaterial color="#8a8478" roughness={1} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[-side * 6.2, 0.4, s * 2.2]}>
+          <boxGeometry args={[0.7, 0.8, 2.6]} />
+          <meshStandardMaterial color="#35502d" roughness={1} />
+        </mesh>
+      ))}
+
+      {/* BACK + SIDES (only when full) */}
+      {full && (
+        <>
+          {win('b1', [back, 1.8, 1.6], rotBack, 6)}
+          {win('b2', [back, 4.0, -2.2], rotBack, 7)}
+          {win('b3', [back, 4.0, 0], rotBack, 8)}
+          {win('b4', [back, 4.0, 2.2], rotBack, 9)}
+          {win('s1', [0, 1.8, 3.53], 0, 10)}
+          {win('s2', [0, 4.0, 3.53], 0, 11)}
+          {win('s3', [0, 1.8, -3.53], Math.PI, 12)}
+          {win('s4', [0, 4.0, -3.53], Math.PI, 13)}
+          <mesh position={[side * 3.05, 1.05, -1.5]}>
+            <boxGeometry args={[0.12, 2.1, 1.1]} />
+            <meshStandardMaterial color="#3a3f48" roughness={0.8} />
+          </mesh>
+          <mesh position={[side * 3.9, 0.08, -1.5]}>
+            <boxGeometry args={[1.8, 0.16, 2.4]} />
+            <meshStandardMaterial color="#6b5a48" roughness={1} />
+          </mesh>
+          <mesh position={[side * 3.1, 2.0, -0.7]}>
+            <boxGeometry args={[0.1, 0.22, 0.14]} />
+            <meshStandardMaterial color="#fff0c0" emissive="#ffc86a" emissiveIntensity={3} />
+          </mesh>
+          <mesh position={[side * 3.45, 0.3, 2.8]}>
+            <boxGeometry args={[0.6, 0.6, 0.7]} />
+            <meshStandardMaterial color="#9aa0a6" roughness={0.6} />
+          </mesh>
+          <mesh position={[side * 8, 0.6, 0]}>
+            <boxGeometry args={[0.1, 1.2, 12]} />
+            <meshStandardMaterial color="#6b5a48" roughness={1} />
+          </mesh>
+          {[-1, 1].map((s) => (
+            <mesh key={'fe' + s} position={[side * 5.5, 0.6, s * 6]}>
+              <boxGeometry args={[5, 1.2, 0.1]} />
+              <meshStandardMaterial color="#6b5a48" roughness={1} />
+            </mesh>
+          ))}
+        </>
+      )}
+    </group>
+  );
+};
+
+/* ---------- Tree ---------- */
+export const Tree: React.FC<{x: number; z: number; s: number}> = ({x, z, s}) => (
+  <group position={[x, 0, z]} scale={[s, s, s]}>
+    <mesh position={[0, 1.2, 0]}>
+      <cylinderGeometry args={[0.14, 0.2, 2.4, 7]} />
+      <meshStandardMaterial color="#4a3426" roughness={1} />
+    </mesh>
+    <mesh position={[0, 3.5, 0]}>
+      <icosahedronGeometry args={[1.5, 1]} />
+      <meshStandardMaterial color="#436b3a" roughness={1} flatShading />
+    </mesh>
+    <mesh position={[0.7, 3.0, 0.3]}>
+      <icosahedronGeometry args={[1.0, 1]} />
+      <meshStandardMaterial color="#3a5e33" roughness={1} flatShading />
+    </mesh>
+    <mesh position={[-0.6, 3.1, -0.4]}>
+      <icosahedronGeometry args={[1.1, 1]} />
+      <meshStandardMaterial color="#4c7640" roughness={1} flatShading />
+    </mesh>
+  </group>
+);
+
+/* ---------- Lamp ---------- */
+export const Lamp: React.FC<{x: number; z: number; light?: boolean}> = ({x, z, light}) => (
+  <group position={[x, 0, z]}>
+    <mesh position={[0, 0.15, 0]}>
+      <cylinderGeometry args={[0.16, 0.2, 0.3, 8]} />
+      <meshStandardMaterial color="#1b1b1b" />
+    </mesh>
+    <mesh position={[0, 2.1, 0]}>
+      <cylinderGeometry args={[0.06, 0.08, 4.2, 8]} />
+      <meshStandardMaterial color="#1b1b1b" />
+    </mesh>
+    <mesh position={[0, 4.4, 0]}>
+      <boxGeometry args={[0.34, 0.45, 0.34]} />
+      <meshStandardMaterial color="#fff0c0" emissive="#ffd27a" emissiveIntensity={3} />
+    </mesh>
+    <mesh position={[0, 4.78, 0]} rotation={[0, Math.PI / 4, 0]}>
+      <coneGeometry args={[0.32, 0.3, 4]} />
+      <meshStandardMaterial color="#1b1b1b" />
+    </mesh>
+    {light && <pointLight position={[0, 4.3, 0]} intensity={30} distance={15} color="#ffc680" />}
+  </group>
+);
+
+/* ---------- Daniel (faces -z) ---------- */
+const SKIN = '#c99a74';
+const JACKET = '#44546b';
+const PANTS = '#2b2e38';
+const HAIR = '#33241a';
+const LEATHER = '#5a4632';
+
+const Leg: React.FC<{x: number; hip: number; knee: number}> = ({x, hip, knee}) => (
+  <group position={[x, 0.9, 0]} rotation={[hip, 0, 0]}>
+    <mesh position={[0, -0.23, 0]}>
+      <boxGeometry args={[0.2, 0.46, 0.22]} />
+      <meshStandardMaterial color={PANTS} />
+    </mesh>
+    <group position={[0, -0.46, 0]} rotation={[knee, 0, 0]}>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.095, 0.095, 0.19, 10]} />
+        <meshStandardMaterial color={PANTS} />
+      </mesh>
+      <mesh position={[0, -0.2, 0]}>
+        <boxGeometry args={[0.18, 0.4, 0.2]} />
+        <meshStandardMaterial color={PANTS} />
+      </mesh>
+      <mesh position={[0, -0.4, -0.05]}>
+        <boxGeometry args={[0.2, 0.1, 0.32]} />
+        <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
+      </mesh>
+    </group>
+  </group>
+);
+
+const Arm: React.FC<{x: number; shoulder: number; elbow: number}> = ({x, shoulder, elbow}) => (
+  <group position={[x, 1.46, 0]} rotation={[shoulder, 0, 0]}>
+    <mesh>
+      <sphereGeometry args={[0.085, 10, 10]} />
+      <meshStandardMaterial color={JACKET} />
+    </mesh>
+    <mesh position={[0, -0.15, 0]}>
+      <boxGeometry args={[0.14, 0.3, 0.16]} />
+      <meshStandardMaterial color={JACKET} />
+    </mesh>
+    <group position={[0, -0.3, 0]} rotation={[elbow, 0, 0]}>
+      <mesh>
+        <sphereGeometry args={[0.075, 10, 10]} />
+        <meshStandardMaterial color={JACKET} />
+      </mesh>
+      <mesh position={[0, -0.14, 0]}>
+        <boxGeometry args={[0.13, 0.28, 0.14]} />
+        <meshStandardMaterial color={JACKET} />
+      </mesh>
+      <mesh position={[0, -0.31, 0]}>
+        <sphereGeometry args={[0.065, 10, 10]} />
+        <meshStandardMaterial color={SKIN} />
+      </mesh>
+    </group>
+  </group>
+);
+
+const Hair: React.FC = () => (
+  <group>
+    <mesh>
+      <sphereGeometry args={[0.205, 24, 16, 0, Math.PI * 2, 0, 1.0]} />
+      <meshStandardMaterial color={HAIR} roughness={0.85} side={THREE.DoubleSide} />
+    </mesh>
+    <mesh>
+      <sphereGeometry args={[0.205, 24, 16, -0.6, Math.PI + 1.2, 0, 1.45]} />
+      <meshStandardMaterial color={HAIR} roughness={0.85} side={THREE.DoubleSide} />
+    </mesh>
+    <mesh>
+      <sphereGeometry args={[0.205, 24, 16, 0.55, Math.PI - 1.1, 0, 1.95]} />
+      <meshStandardMaterial color={HAIR} roughness={0.85} side={THREE.DoubleSide} />
+    </mesh>
+    <mesh position={[0, 0.18, -0.07]} rotation={[0.35, 0, 0]}>
+      <boxGeometry args={[0.2, 0.07, 0.17]} />
+      <meshStandardMaterial color={HAIR} roughness={0.85} />
+    </mesh>
+  </group>
+);
+
+export type FaceSpec = {brow?: number; eye?: number; mouth?: number; open?: number; look?: number};
+
+export const Face: React.FC<FaceSpec> = ({brow = 0, eye = 1, mouth = 0, open = 0, look = 0}) => {
+  const wide = Math.max(0, eye - 1);
+  return (
+    <>
+      {[-1, 1].map((s) => (
+        <group key={'eye' + s} position={[s * 0.07, 0.01, -0.172]} scale={[1 + 0.35 * wide, Math.max(0.12, eye), 1 + 0.35 * wide]}>
+          <mesh>
+            <sphereGeometry args={[0.027, 10, 10]} />
+            <meshStandardMaterial color="#f2efe8" />
+          </mesh>
+          <mesh position={[look * 0.012, 0, -0.02]}>
+            <sphereGeometry args={[0.014, 8, 8]} />
+            <meshStandardMaterial color="#111" />
+          </mesh>
+        </group>
+      ))}
+      {[-1, 1].map((s) => (
+        <mesh key={'br' + s} position={[s * 0.07, 0.055 + 0.018 * brow + 0.012 * wide, -0.172]} rotation={[0, 0, -s * 0.5 * brow]}>
+          <boxGeometry args={[0.06, 0.012, 0.012]} />
+          <meshStandardMaterial color={HAIR} />
+        </mesh>
+      ))}
+      <mesh position={[0, -0.03, -0.19]}>
+        <boxGeometry args={[0.035, 0.05, 0.04]} />
+        <meshStandardMaterial color={SKIN} />
+      </mesh>
+      {open > 0.05 ? (
+        <mesh position={[0, -0.085, -0.176]} scale={[1.3 + 0.3 * open, open * 1.6, 0.4]}>
+          <sphereGeometry args={[0.025, 10, 10]} />
+          <meshStandardMaterial color="#2a0d0d" />
+        </mesh>
+      ) : (
+        [-1, 1].map((s) => (
+          <mesh key={'m' + s} position={[s * 0.0175, -0.08 + mouth * 0.004, -0.18]} rotation={[0, 0, s * 0.6 * mouth]}>
+            <boxGeometry args={[0.037, 0.012, 0.01]} />
+            <meshStandardMaterial color="#5a2f26" />
+          </mesh>
+        ))
+      )}
+    </>
+  );
+};
+
+export const Person: React.FC<{frame: number; stand?: boolean; walk?: number; face?: FaceSpec}> = ({frame, stand = false, walk = 1, face = {}}) => {
+  const p = frame * 0.34;
+  const w = stand ? 0 : walk;
+  const hipA = Math.sin(p) * 0.6 * w;
+  const hipB = Math.sin(p + Math.PI) * 0.6 * w;
+  const kneeA = -Math.max(0, Math.cos(p)) * 0.9 * w;
+  const kneeB = -Math.max(0, Math.cos(p + Math.PI)) * 0.9 * w;
+  const bob = Math.abs(Math.cos(p)) * 0.04 * w;
+  const sway = Math.sin(p) * 0.06 * w;
+  return (
+    <group position={[0, bob, 0]} rotation={[0, sway, 0]}>
+      <mesh position={[0, 0.92, 0]}>
+        <boxGeometry args={[0.46, 0.18, 0.26]} />
+        <meshStandardMaterial color={PANTS} />
+      </mesh>
+      <mesh position={[0, 1.2, 0]}>
+        <boxGeometry args={[0.5, 0.62, 0.28]} />
+        <meshStandardMaterial color={JACKET} />
+      </mesh>
+      {/* jacket front: zip + pockets */}
+      <mesh position={[0, 1.2, -0.142]}>
+        <boxGeometry args={[0.015, 0.6, 0.01]} />
+        <meshStandardMaterial color="#1c2230" />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={'pk' + s} position={[s * 0.16, 1.0, -0.142]}>
+          <boxGeometry args={[0.12, 0.02, 0.01]} />
+          <meshStandardMaterial color="#1c2230" />
+        </mesh>
+      ))}
+      {/* cross-body bag strap (front + back) and bag on the hip */}
+      <mesh position={[0, 1.2, -0.146]} rotation={[0, 0, 0.55]}>
+        <boxGeometry args={[0.05, 0.72, 0.012]} />
+        <meshStandardMaterial color="#2a2118" />
+      </mesh>
+      <mesh position={[0, 1.2, 0.146]} rotation={[0, 0, 0.55]}>
+        <boxGeometry args={[0.05, 0.72, 0.012]} />
+        <meshStandardMaterial color="#2a2118" />
+      </mesh>
+      <mesh position={[0.08, 1.02, 0.19]}>
+        <boxGeometry args={[0.28, 0.2, 0.1]} />
+        <meshStandardMaterial color={LEATHER} roughness={0.8} />
+      </mesh>
+      <mesh position={[0.08, 1.11, 0.192]}>
+        <boxGeometry args={[0.29, 0.05, 0.104]} />
+        <meshStandardMaterial color="#3d2f21" roughness={0.8} />
+      </mesh>
+      <mesh position={[0.08, 1.06, 0.245]}>
+        <boxGeometry args={[0.05, 0.06, 0.012]} />
+        <meshStandardMaterial color="#9a9a8c" metalness={0.7} roughness={0.35} />
+      </mesh>
+      {/* scarf + neck */}
+      <mesh position={[0, 1.53, 0]}>
+        <boxGeometry args={[0.3, 0.1, 0.3]} />
+        <meshStandardMaterial color="#9a3a32" />
+      </mesh>
+      <mesh position={[0, 1.58, 0]}>
+        <cylinderGeometry args={[0.065, 0.075, 0.14, 10]} />
+        <meshStandardMaterial color={SKIN} />
+      </mesh>
+      {/* head */}
+      <group position={[0, 1.74, 0]}>
+        <mesh scale={[1, 1.08, 1]}>
+          <sphereGeometry args={[0.19, 20, 16]} />
+          <meshStandardMaterial color={SKIN} roughness={0.8} />
+        </mesh>
+        {[-1, 1].map((s) => (
+          <mesh key={'ear' + s} position={[s * 0.19, -0.02, 0]}>
+            <boxGeometry args={[0.04, 0.09, 0.05]} />
+            <meshStandardMaterial color={SKIN} />
+          </mesh>
+        ))}
+        <Face {...face} />
+        <Hair />
+      </group>
+      <Leg x={-0.12} hip={hipA} knee={kneeA} />
+      <Leg x={0.12} hip={hipB} knee={kneeB} />
+      <Arm x={-0.33} shoulder={-hipA * 0.8} elbow={0.1 + 0.15 * w} />
+      <Arm x={0.33} shoulder={-hipB * 0.8} elbow={0.1 + 0.15 * w} />
+    </group>
+  );
+};
+
+/* ---------- Car (front faces +z) ---------- */
+const Wheel: React.FC<{x: number; z: number; spin: number}> = ({x, z, spin}) => {
+  const out = x > 0 ? 1 : -1;
+  return (
+    <group position={[x, 0.38, z]} rotation={[spin, 0, 0]}>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.38, 0.38, 0.26, 20]} />
+        <meshStandardMaterial color="#0d0d0d" roughness={0.95} />
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[out * 0.131, 0, 0]}>
+        <cylinderGeometry args={[0.23, 0.23, 0.02, 16]} />
+        <meshStandardMaterial color="#8a8d92" metalness={0.7} roughness={0.35} />
+      </mesh>
+      <mesh position={[out * 0.14, 0, 0]}>
+        <boxGeometry args={[0.02, 0.4, 0.06]} />
+        <meshStandardMaterial color="#3a3c40" />
+      </mesh>
+      <mesh position={[out * 0.14, 0, 0]}>
+        <boxGeometry args={[0.02, 0.06, 0.4]} />
+        <meshStandardMaterial color="#3a3c40" />
+      </mesh>
+    </group>
+  );
+};
+
+export const Car: React.FC<{frame: number; startFrame?: number; still?: boolean}> = ({
+  frame,
+  startFrame = 210,
+  still = false,
+}) => {
+  const f = Math.max(0, frame - startFrame);
+  const z = still
+    ? 0
+    : interpolate(f, [0, 80], [-48, -28], {
+        easing: Easing.out(Easing.cubic),
+        extrapolateRight: 'clamp',
+        extrapolateLeft: 'clamp',
+      });
+  const spin = still ? 0 : (z + 48) / 0.38;
+
+  const bodyGeo = useMemo(() => {
+    const s = new THREE.Shape();
+    s.moveTo(-2.2, 0.35);
+    s.lineTo(2.2, 0.35);
+    s.lineTo(2.2, 0.82);
+    s.lineTo(1.3, 0.95);
+    s.lineTo(0.55, 1.5);
+    s.lineTo(-0.8, 1.5);
+    s.lineTo(-1.5, 0.95);
+    s.lineTo(-2.2, 0.92);
+    s.lineTo(-2.2, 0.35);
+    const g = new THREE.ExtrudeGeometry(s, {depth: 1.9, bevelEnabled: false});
+    g.translate(0, 0, -0.95);
+    g.rotateY(-Math.PI / 2);
+    return g;
+  }, []);
+
+  const glassGeo = useMemo(() => {
+    const s = new THREE.Shape();
+    s.moveTo(1.242, 1.0);
+    s.lineTo(0.669, 1.42);
+    s.lineTo(-0.912, 1.42);
+    s.lineTo(-1.446, 1.0);
+    s.lineTo(1.242, 1.0);
+    const g = new THREE.ExtrudeGeometry(s, {depth: 1.94, bevelEnabled: false});
+    g.translate(0, 0, -0.97);
+    g.rotateY(-Math.PI / 2);
+    return g;
+  }, []);
+
+  return (
+    <group position={[still ? 0 : -1.8, 0, z]}>
+      <mesh geometry={bodyGeo}>
+        <meshStandardMaterial color="#1c2636" metalness={0.35} roughness={0.45} />
+      </mesh>
+      <mesh geometry={glassGeo}>
+        <meshStandardMaterial color="#0a0f16" metalness={0.8} roughness={0.15} />
+      </mesh>
+      {/* bumpers, grille, plates */}
+      <mesh position={[0, 0.45, 2.2]}>
+        <boxGeometry args={[1.95, 0.2, 0.12]} />
+        <meshStandardMaterial color="#0b0b0d" />
+      </mesh>
+      <mesh position={[0, 0.45, -2.2]}>
+        <boxGeometry args={[1.95, 0.2, 0.12]} />
+        <meshStandardMaterial color="#0b0b0d" />
+      </mesh>
+      <mesh position={[0, 0.65, 2.21]}>
+        <boxGeometry args={[0.9, 0.14, 0.04]} />
+        <meshStandardMaterial color="#050506" />
+      </mesh>
+      <mesh position={[0, 0.45, 2.27]}>
+        <boxGeometry args={[0.5, 0.12, 0.02]} />
+        <meshStandardMaterial color="#d8d8cc" />
+      </mesh>
+      <mesh position={[0, 0.45, -2.27]}>
+        <boxGeometry args={[0.5, 0.12, 0.02]} />
+        <meshStandardMaterial color="#d8d8cc" />
+      </mesh>
+      <mesh position={[0.6, 0.36, -2.32]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.2, 10]} />
+        <meshStandardMaterial color="#555a60" metalness={0.8} roughness={0.3} />
+      </mesh>
+      {/* sides: door seams, handles, skirts, mirrors */}
+      {[-1, 1].map((s) => (
+        <React.Fragment key={'side' + s}>
+          {[0.95, -0.1, -1.15].map((dz) => (
+            <mesh key={dz} position={[s * 0.957, 0.72, dz]}>
+              <boxGeometry args={[0.012, 0.46, 0.02]} />
+              <meshStandardMaterial color="#070a10" />
+            </mesh>
+          ))}
+          {[0.45, -0.65].map((dz) => (
+            <mesh key={'h' + dz} position={[s * 0.965, 0.88, dz]}>
+              <boxGeometry args={[0.03, 0.04, 0.2]} />
+              <meshStandardMaterial color="#8a8d92" metalness={0.7} roughness={0.3} />
+            </mesh>
+          ))}
+          <mesh position={[s * 0.96, 0.42, 0]}>
+            <boxGeometry args={[0.04, 0.1, 2.6]} />
+            <meshStandardMaterial color="#0b0b0d" />
+          </mesh>
+          <mesh position={[s * 1.02, 1.08, 0.75]}>
+            <boxGeometry args={[0.1, 0.1, 0.18]} />
+            <meshStandardMaterial color="#1c2636" />
+          </mesh>
+        </React.Fragment>
+      ))}
+      <Wheel x={-0.88} z={1.35} spin={spin} />
+      <Wheel x={0.88} z={1.35} spin={spin} />
+      <Wheel x={-0.88} z={-1.35} spin={spin} />
+      <Wheel x={0.88} z={-1.35} spin={spin} />
+      {/* headlights, beams, taillights */}
+      {[-0.65, 0.65].map((hx) => (
+        <React.Fragment key={hx}>
+          <mesh position={[hx, 0.7, 2.21]}>
+            <boxGeometry args={[0.38, 0.14, 0.06]} />
+            <meshStandardMaterial color="white" emissive="#fff6d0" emissiveIntensity={6} />
+          </mesh>
+          {!still && (
+            <mesh position={[hx, 0.7, 6.7]} rotation={[-Math.PI / 2, 0, 0]}>
+              <coneGeometry args={[1.3, 9, 20, 1, true]} />
+              <meshBasicMaterial
+                color="#fff0c0"
+                transparent
+                opacity={0.07}
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+                side={THREE.DoubleSide}
+              />
+            </mesh>
+          )}
+          <mesh position={[hx * 1.05, 0.76, -2.21]}>
+            <boxGeometry args={[0.4, 0.1, 0.05]} />
+            <meshStandardMaterial color="#440000" emissive="#ff1a1a" emissiveIntensity={2} />
+          </mesh>
+        </React.Fragment>
+      ))}
+      {!still && <pointLight position={[0, 0.8, 3.4]} intensity={30} distance={11} color="#fff2cc" />}
+    </group>
+  );
+};
+
+/* ---------- Street (the whole town set) ---------- */
+export const Street: React.FC<{detail?: boolean}> = ({detail = false}) => {
+  const houses = [0, 1, 2, 3, 4, 5, 6];
+  return (
+    <>
+      <fog attach="fog" args={[HORIZON, 8, 48]} />
+      <hemisphereLight args={['#ffdca8', '#3a3028', 0.55]} />
+      <ambientLight intensity={0.3} color="#ffd9a0" />
+      <directionalLight position={[0, 6, -50]} intensity={0.7} color="#ffbf80" />
+      <directionalLight position={[3, 5, 12]} intensity={0.9} color="#ffd9b0" />
+      <Sky />
+
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -80]}>
+        <planeGeometry args={[7, 240]} />
+        <meshStandardMaterial color="#3a3836" roughness={1} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <React.Fragment key={s}>
+          <mesh position={[s * 3.6, 0.06, -80]}>
+            <boxGeometry args={[0.2, 0.12, 240]} />
+            <meshStandardMaterial color="#7d786e" />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[s * 4.7, 0.05, -80]}>
+            <planeGeometry args={[2, 240]} />
+            <meshStandardMaterial color="#9a9486" roughness={1} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[s * 18, 0, -80]}>
+            <planeGeometry args={[24.6, 240]} />
+            <meshStandardMaterial color="#4a6b35" roughness={1} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[s * 3.0, 0.015, -80]}>
+            <planeGeometry args={[0.12, 240]} />
+            <meshStandardMaterial color="#d8d4c8" roughness={1} />
+          </mesh>
+        </React.Fragment>
+      ))}
+      {Array.from({length: 40}).map((_, i) => (
+        <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 10 - i * 5]}>
+          <planeGeometry args={[0.15, 2.2]} />
+          <meshStandardMaterial color="#d9b23a" roughness={1} />
+        </mesh>
+      ))}
+
+      {houses.map((i) => (
+        <React.Fragment key={i}>
+          <House x={12.5} z={6 - i * 10} idx={i} side={1} full={detail} />
+          <House x={-12.5} z={3 - i * 10} idx={i + 3} side={-1} full={detail} />
+          <Tree x={7.5} z={1 - i * 10} s={0.9 + (i % 3) * 0.12} />
+          <Tree x={-7.5} z={-2 - i * 10} s={1.0 + ((i + 1) % 3) * 0.1} />
+        </React.Fragment>
+      ))}
+
+      {Array.from({length: 7}).map((_, i) => (
+        <React.Fragment key={'lp' + i}>
+          <Lamp x={5.2} z={2 - i * 14} light={i < 3} />
+          <Lamp x={-5.2} z={-5 - i * 14} />
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
+/* ---------- Story frame: portrait canvas + captions ---------- */
+export type CaptionDef = {from: number; dur: number; text: string};
+
+export const StoryFrame: React.FC<{captions: CaptionDef[]; children: React.ReactNode; overlay?: React.ReactNode}> = ({captions, children, overlay}) => (
+  <AbsoluteFill style={{backgroundColor: HORIZON}}>
+    <ThreeCanvas width={1080} height={1920} camera={{fov: 62, position: [0, 2, 8], near: 0.1, far: 220}}>
+      {children}
+    </ThreeCanvas>
+    {overlay}
+    {captions.map((c, i) => (
+      <Sequence key={i} from={c.from} durationInFrames={c.dur}>
+        <Caption dur={c.dur} text={c.text} />
+      </Sequence>
+    ))}
+  </AbsoluteFill>
+);
+
+/* ---------- Turnaround sheet: 4 views (front, side, back, side) ---------- */
+export const Sheet: React.FC<{
+  cols: number;
+  sx: number;
+  sz: number;
+  dist: number;
+  lookY: number;
+  base: number;
+  children: React.ReactNode;
+}> = ({cols, sx, sz, dist, lookY, base, children}) => {
+  const angles = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
+  const rows = Math.ceil(4 / cols);
+  return (
+    <AbsoluteFill style={{backgroundColor: '#2a2c30'}}>
+      <ThreeCanvas width={1920} height={1080} camera={{fov: 30, position: [0, 3, 10], near: 0.1, far: 300}}>
+        <color attach="background" args={['#2a2c30']} />
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[4, 8, 8]} intensity={1.1} />
+        <directionalLight position={[-6, 4, -6]} intensity={0.6} />
+        <Rig pos={[0, lookY + dist * 0.3, dist]} look={[0, lookY, 0]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[300, 300]} />
+          <meshStandardMaterial color="#383b41" roughness={1} />
+        </mesh>
+        {angles.map((a, i) => {
+          const c = i % cols;
+          const r = Math.floor(i / cols);
+          const x = (c - (cols - 1) / 2) * sx;
+          const z = (r - (rows - 1) / 2) * sz;
+          return (
+            <group key={i} position={[x, 0, z]} rotation={[0, a + base, 0]}>
+              {children}
+            </group>
+          );
+        })}
+      </ThreeCanvas>
+    </AbsoluteFill>
+  );
+};
+
+=== FILE: src/studio/motion.ts ===
+export type Segs = [number, number][];
+
+export const smooth = (x: number) => {
+  const t = Math.min(1, Math.max(0, x));
+  return t * t * (3 - 2 * t);
+};
+
+// 0 = standing still, 1 = full walking speed. Eases in/out over 8 frames.
+// boost = [frame, extra]: from that frame he gradually walks (1 + extra) times faster.
+export const speedAt = (f: number, segs: Segs, boost?: [number, number]) => {
+  let s = 0;
+  for (const [a, b] of segs) s = Math.max(s, Math.min(smooth((f - a) / 8), smooth((b - f) / 8)));
+  if (boost) s *= 1 + boost[1] * smooth((f - boost[0]) / 15);
+  return s;
+};
+
+export const integrate = (f: number, segs: Segs, boost?: [number, number]) => {
+  let dist = 0;
+  let phase = 0;
+  for (let i = 0; i < f; i++) {
+    const s = speedAt(i, segs, boost);
+    dist += 0.124 * s;
+    phase += 0.34 * s;
+  }
+  return {dist, phase};
+};
+
+// turns: [startFrame, endFrame, targetAngle]. Each turn eases from the previous angle to its target.
+export const angleKeys = (f: number, keys: [number, number, number][]) => {
+  let a = 0;
+  for (const [s, e, t] of keys) {
+    if (f <= s) return a;
+    if (f < e) return a + (t - a) * smooth((f - s) / Math.max(1, e - s));
+    a = t;
+  }
+  return a;
+};
+
+=== FILE: src/studio/narration.tsx ===
+import React from 'react';
+import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+
+export type Word = {w: string; s: number; e: number};
+export type Line = {text: string; start: number; dur: number; file: string; words: Word[]};
+export type Narration = {
+  fps: number;
+  total: number;
+  totalFrames: number;
+  cutFrame: number;
+  hasAudio: boolean;
+  lines: Line[];
+};
+
+const CHUNK = 3;
+const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+
+// Word-by-word captions: 3 words at a time, the spoken word lights up.
+export const KaraokeCaptions: React.FC<{lines: Line[]; fps: number}> = ({lines, fps}) => {
+  const frame = useCurrentFrame();
+  const now = frame / fps;
+  const line = lines.find((l) => now >= l.start - 0.05 && now <= l.start + l.dur + 0.35);
+  if (!line || line.words.length === 0) return null;
+  const t = now - line.start;
+  let cur = 0;
+  line.words.forEach((w, i) => {
+    if (t >= w.s - 0.02) cur = i;
+  });
+  const first = Math.floor(cur / CHUNK) * CHUNK;
+  const chunk = line.words.slice(first, first + CHUNK);
+  const local = t - line.words[first].s;
+  const pop = interpolate(local, [0, 0.12], [0.8, 1], clamp);
+  const op = interpolate(local, [0, 0.06], [0, 1], clamp);
+  return (
+    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 300}}>
+      <div
+        style={{
+          opacity: op,
+          transform: `scale(${pop})`,
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 24,
+          padding: '0 60px',
+          fontFamily: 'sans-serif',
+          fontWeight: 900,
+          fontSize: 92,
+          textTransform: 'uppercase',
+          lineHeight: 1.1,
+          textAlign: 'center',
+        }}
+      >
+        {chunk.map((w, i) => {
+          const active = first + i === cur;
+          return (
+            <span
+              key={first + i}
+              style={{
+                color: active ? '#ffd54a' : '#ffffff',
+                WebkitTextStroke: '10px #000',
+                paintOrder: 'stroke fill',
+                textShadow: '0 6px 18px rgba(0,0,0,0.8)',
+                transform: active ? 'scale(1.12)' : 'none',
+              }}
+            >
+              {w.w}
+            </span>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+export const Vignette: React.FC<{strength?: number}> = ({strength = 0.5}) => (
+  <AbsoluteFill
+    style={{
+      background: `radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,${strength}) 100%)`,
+      pointerEvents: 'none',
+    }}
+  />
+);
+
+=== FILE: src/studio/stalker.tsx ===
+import React from 'react';
+
+const SUIT = '#0b0b0e';
+const PALE = '#d9d5cb';
+
+const Limb: React.FC<{x: number; y: number; a: number; b: number}> = ({x, y, a, b}) => (
+  <group position={[x, y, 0]} rotation={[a, 0, 0]}>
+    <mesh position={[0, -0.28, 0]}>
+      <boxGeometry args={[0.13, 0.56, 0.13]} />
+      <meshStandardMaterial color={SUIT} roughness={0.9} />
+    </mesh>
+    <group position={[0, -0.56, 0]} rotation={[b, 0, 0]}>
+      <mesh position={[0, -0.28, 0]}>
+        <boxGeometry args={[0.11, 0.56, 0.11]} />
+        <meshStandardMaterial color={SUIT} roughness={0.9} />
+      </mesh>
+      <mesh position={[0, -0.56, -0.08]}>
+        <boxGeometry args={[0.13, 0.07, 0.3]} />
+        <meshStandardMaterial color="#050506" />
+      </mesh>
+    </group>
+  </group>
+);
+
+const Arm: React.FC<{x: number; a: number; b: number}> = ({x, a, b}) => (
+  <group position={[x, 0.82, 0]} rotation={[a, 0, 0]}>
+    <mesh position={[0, -0.29, 0]}>
+      <boxGeometry args={[0.09, 0.58, 0.09]} />
+      <meshStandardMaterial color={SUIT} roughness={0.9} />
+    </mesh>
+    <group position={[0, -0.58, 0]} rotation={[b, 0, 0]}>
+      <mesh position={[0, -0.3, 0]}>
+        <boxGeometry args={[0.08, 0.6, 0.08]} />
+        <meshStandardMaterial color={SUIT} roughness={0.9} />
+      </mesh>
+      <mesh position={[0, -0.64, 0]}>
+        <boxGeometry args={[0.07, 0.1, 0.04]} />
+        <meshStandardMaterial color={PALE} />
+      </mesh>
+      {[-0.025, -0.008, 0.008, 0.025].map((fx, i) => (
+        <mesh key={i} position={[fx, -0.76 - (i % 2) * 0.02, 0]}>
+          <boxGeometry args={[0.011, 0.16, 0.011]} />
+          <meshStandardMaterial color={PALE} />
+        </mesh>
+      ))}
+    </group>
+  </group>
+);
+
+const Head: React.FC<{mouth: number}> = ({mouth}) => (
+  <group>
+    <mesh scale={[0.95, 1.35, 0.95]}>
+      <sphereGeometry args={[0.15, 18, 14]} />
+      <meshStandardMaterial color={PALE} roughness={0.7} />
+    </mesh>
+    {[-1, 1].map((s) => (
+      <mesh key={s} position={[s * 0.055, 0.04, -0.125]} scale={[1, 1.7, 0.5]}>
+        <sphereGeometry args={[0.028, 10, 10]} />
+        <meshStandardMaterial color="#050505" />
+      </mesh>
+    ))}
+    {[-1, -0.5, 0, 0.5, 1].map((u) => (
+      <mesh key={u} position={[u * 0.07, -0.085 + 0.04 * u * u, -0.131]} rotation={[0, 0, Math.atan(1.1 * u)]}>
+        <boxGeometry args={[0.04, 0.008, 0.01]} />
+        <meshStandardMaterial color="#080808" />
+      </mesh>
+    ))}
+    {mouth > 0.05 && (
+      <mesh position={[0, -0.095, -0.13]} scale={[2.2, mouth * 2.6, 0.5]}>
+        <sphereGeometry args={[0.028, 10, 10]} />
+        <meshStandardMaterial color="#030303" />
+      </mesh>
+    )}
+  </group>
+);
+
+// Tall, thin, pale-faced. Faces -z like Daniel. lean: 0 = upright, 1 = bent over to whisper in his ear.
+export const Stalker: React.FC<{phase: number; walk?: number; lean?: number; mouth?: number}> = ({
+  phase,
+  walk = 1,
+  lean = 0,
+  mouth = 0,
+}) => {
+  const w = Math.min(1.2, walk);
+  const sA = Math.sin(phase) * 0.42 * w;
+  const kA = -Math.max(0, Math.cos(phase)) * 0.55 * w;
+  const kB = -Math.max(0, Math.cos(phase + Math.PI)) * 0.55 * w;
+  const bob = Math.abs(Math.cos(phase)) * 0.03 * w;
+  const a = -1.05 * lean;
+  const tilt = 0.17 * (1 - lean);
+  return (
+    <group position={[0, bob, 0]}>
+      <Limb x={-0.1} y={1.12} a={sA} b={kA} />
+      <Limb x={0.1} y={1.12} a={-sA} b={kB} />
+      <group position={[0, 1.12, 0]} rotation={[a, 0, 0]}>
+        <mesh position={[0, 0.45, 0]}>
+          <boxGeometry args={[0.34, 0.85, 0.2]} />
+          <meshStandardMaterial color={SUIT} roughness={0.9} />
+        </mesh>
+        <mesh position={[0, 0.93, 0]}>
+          <cylinderGeometry args={[0.04, 0.05, 0.14, 8]} />
+          <meshStandardMaterial color={PALE} />
+        </mesh>
+        <Arm x={-0.26} a={-sA * 0.7 - a} b={0.08} />
+        <Arm x={0.26} a={sA * 0.7 - a} b={0.08} />
+        <group position={[0, 1.18, 0]} rotation={[-a, (Math.PI / 2) * lean, tilt]}>
+          <Head mouth={mouth} />
+        </group>
+      </group>
+    </group>
+  );
+};
+
+=== FILE: src/studio/stories/Alone.tsx ===
+import React from 'react';
+import * as R from 'remotion';
+import {AbsoluteFill, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {Person, Rig, StoryFrame} from '../kit';
+import {Narration, Vignette} from '../narration';
+import {EndCard, HighlightCaptions, TitleCard} from '../captions';
+import {Stalker} from '../stalker';
+import {Street, ThemeName} from '../world';
+import {Segs, angleKeys, integrate, smooth, speedAt} from '../motion';
+import raw from '../data/Alone.json';
+
+type V3 = [number, number, number];
+type Plan = {walk: number[][]; boost: number[]; turn: number[]; returnTurn: number[]; lastTurn: number[]};
+const N = raw as unknown as Narration & {
+  theme?: string;
+  title?: string;
+  subtitle?: string;
+  endtext?: string;
+  highlight?: string[];
+  tags?: Record<string, number>;
+  plan: Plan;
+};
+const AudioTag: any = (R as any).Html5Audio ?? (R as any).Audio;
+const FPS = N.fps;
+const TOTAL = N.totalFrames;
+const THEME = (N.theme ?? 'dusk') as ThemeName;
+const F = (s: number) => Math.round(s * FPS);
+const tg = (k: string, d: number) => (N.tags && N.tags[k] !== undefined ? F(N.tags[k]) : d);
+const inc = (a: number[]) => {
+  const o = [...a];
+  for (let i = 1; i < o.length; i++) if (o[i] <= o[i - 1]) o[i] = o[i - 1] + 1;
+  return o;
+};
+const lin = (keys: number[], vals: number[], x: number) => {
+  if (x <= keys[0]) return vals[0];
+  for (let i = 1; i < keys.length; i++) {
+    if (x <= keys[i]) return vals[i - 1] + ((vals[i] - vals[i - 1]) * (x - keys[i - 1])) / Math.max(1, keys[i] - keys[i - 1]);
+  }
+  return vals[vals.length - 1];
+};
+
+// moments in the story (frames), taken from the @tags in the script
+const TONIGHT = tg('tonight', 200);
+const STEPS = tg('steps', 260);
+const STOP = tg('stop', 360);
+const WALK = tg('walk', 420);
+const TURN_CUT = tg('turn', 500);
+const NOBODY = tg('nobody', 560);
+const RELIEF = tg('relief', 600);
+const RESUME = tg('resume', 680);
+const LAMPS = tg('lamps', 760);
+const FAST = tg('fast', 900);
+const NEAR = tg('near', 1000);
+const BREATH = tg('breath', 1100);
+const LEAN = tg('lean', 1180);
+const WHISPER = tg('whisper', 1260);
+const AGAIN = tg('again', 1320);
+const NAME = tg('name', 1450);
+const NK = tg('nk', 1520);
+const FINAL = tg('final', 1650);
+const LASTTURN = tg('lastturn', 1750);
+
+const WALKS: Segs = N.plan.walk.map((s) => [F(s[0]), F(s[1])] as [number, number]);
+const BOOST: [number, number] = [F(N.plan.boost[0]), N.plan.boost[1]];
+const TURNS: [number, number, number][] = [
+  [F(N.plan.turn[0]), F(N.plan.turn[1]), Math.PI],
+  [F(N.plan.returnTurn[0]), F(N.plan.returnTurn[1]), 0],
+  [F(N.plan.lastTurn[0]), F(N.plan.lastTurn[1]), Math.PI],
+];
+
+// how far behind Daniel the creature is (metres)
+const GAP_K = inc([0, STEPS, STOP, WALK, TURN_CUT, RESUME, LAMPS, FAST, NEAR, BREATH, LEAN, LASTTURN, LASTTURN + 45, TOTAL]);
+const GAP_V = [70, 40, 33, 33, 28, 36, 30, 14, 2.4, 2.0, 1.0, 1.0, 2.2, 2.2];
+
+// how far in front of him the camera sits in the walking-towards-us shots
+const FRONT_K = inc([TONIGHT, STOP, TURN_CUT, RESUME, LAMPS, FAST, NEAR]);
+const FRONT_V = [4.4, 3.6, 3.6, 4.2, 4.2, 3.0, 2.6];
+
+// Daniel's face over time: [frame, brow, eye, mouth, open, look]
+const ROWS: number[][] = [
+  [0, 0.0, 1.0, 0.35, 0, 0],
+  [TONIGHT, 0.2, 1.0, 0.05, 0, 0],
+  [STEPS, 0.6, 1.1, -0.2, 0, -0.5],
+  [STOP, 0.8, 1.2, -0.3, 0, -0.8],
+  [WALK, 0.6, 1.15, -0.2, 0, 0],
+  [TURN_CUT, 0.9, 1.4, -0.3, 0.15, 0],
+  [NOBODY, 0.3, 1.2, 0.0, 0, 0],
+  [RELIEF, -0.2, 0.6, 1.0, 0.55, 0],
+  [RESUME, 0.0, 1.0, 0.4, 0, 0],
+  [LAMPS, 0.7, 1.25, -0.3, 0, 0.4],
+  [FAST, 1.0, 1.4, -0.5, 0.1, 0.8],
+  [NEAR, 1.0, 1.55, -0.6, 0.25, 0],
+  [BREATH, 1.0, 1.7, -0.5, 0.1, 0],
+  [LEAN, 1.0, 1.6, -0.4, 0.05, 0.2],
+  [WHISPER, 1.0, 1.7, -0.2, 0.05, 1.0],
+  [AGAIN, 0.9, 1.5, -0.3, 0.1, 1.0],
+  [NAME, 1.0, 1.75, -0.3, 0.2, 0.5],
+  [NK, 0.9, 1.3, -0.7, 0, 0],
+  [FINAL, 0.5, 1.1, -0.4, 0, 0],
+  [LASTTURN, 0.4, 1.0, -0.3, 0, 0],
+  [LASTTURN + 75, 1.0, 1.9, -0.8, 1.0, 0],
+];
+const ROW_K = inc(ROWS.map((r) => r[0]));
+const col = (c: number, f: number) =>
+  lin(
+    ROW_K,
+    ROWS.map((r) => r[c]),
+    f,
+  );
+
+const X = 4.4; // sidewalk
+
+const shotAt = (f: number) => {
+  if (f < TONIGHT) return 'behind';
+  if (f < TURN_CUT) return 'front';
+  if (f < NOBODY) return 'close';
+  if (f < RELIEF) return 'pov';
+  if (f < RESUME) return 'relief';
+  if (f < NEAR) return 'front';
+  if (f < LEAN) return 'looming';
+  if (f < AGAIN) return 'ear';
+  if (f < NAME) return 'face';
+  if (f < NK) return 'thingface';
+  if (f < LASTTURN) return 'push';
+  if (f < LASTTURN + 80) return 'turnwide';
+  return 'pov2';
+};
+
+const camFor = (shot: string, f: number, dz: number): {pos: V3; look: V3} => {
+  const k = (a: number, b: number) =>
+    interpolate(f, [a, Math.max(a + 1, b)], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  switch (shot) {
+    case 'behind':
+      return {pos: [X - 0.9 + Math.sin(f * 0.03) * 0.1, 1.9, dz + 4.0], look: [X + 0.1, 1.3, dz - 3]};
+    case 'front':
+      return {pos: [X + 0.25, 1.68, dz - lin(FRONT_K, FRONT_V, f)], look: [X, 1.5, dz + 6]};
+    case 'close': {
+      const q = k(TURN_CUT, NOBODY);
+      return {pos: [X - 0.85 + 0.2 * q, 1.55, dz + 1.7 - 0.5 * q], look: [X, 1.5, dz]};
+    }
+    case 'pov':
+      return {pos: [X + Math.sin(f * 0.05) * 0.015, 1.66, dz + 0.3], look: [X, 1.45, dz + 14]};
+    case 'relief': {
+      const q = k(RELIEF, RESUME);
+      return {pos: [X - 0.9, 1.68, dz + 1.5 - 0.3 * q], look: [X, 1.7, dz]};
+    }
+    case 'looming': {
+      const q = k(NEAR, LEAN);
+      return {pos: [X + 0.15, 1.85, dz - 2.4 + 0.4 * q], look: [X + 0.05, 1.95, dz + 1.0]};
+    }
+    case 'ear': {
+      const q = k(LEAN, AGAIN);
+      return {pos: [X + 0.3, 1.78, dz - 1.9 + 0.5 * q], look: [X + 0.27, 1.77, dz]};
+    }
+    case 'face':
+      return {pos: [X + 0.3, 1.76, dz - 1.2], look: [X + 0.15, 1.76, dz]};
+    case 'thingface':
+      return {pos: [X - 1.1, 1.85, dz - 0.9], look: [X + 0.45, 1.8, dz - 0.05]};
+    case 'push': {
+      const q = k(NK, LASTTURN);
+      return {pos: [X, 1.74, dz - 1.5 + 0.7 * q], look: [X + 0.05, 1.74, dz]};
+    }
+    case 'turnwide':
+      return {pos: [X + 0.3, 1.9, dz - 3.0], look: [X, 1.7, dz + 1.5]};
+    default: {
+      const q = k(LASTTURN + 80, TOTAL);
+      return {pos: [X, 2.25, dz + 1.7 - 0.5 * q], look: [X, 1.7, dz]};
+    }
+  }
+};
+
+// walk both of them forward frame by frame
+const track = (f: number) => {
+  let dist = 0;
+  let phase = 0;
+  let travelled = 0;
+  let prevZ = 6 + lin(GAP_K, GAP_V, 0);
+  let lastDelta = 0;
+  for (let i = 0; i < f; i++) {
+    const s = speedAt(i, WALKS, BOOST);
+    dist += 0.124 * s;
+    phase += 0.34 * s;
+    const z = 6 - dist + lin(GAP_K, GAP_V, i + 1);
+    lastDelta = Math.abs(z - prevZ);
+    travelled += lastDelta;
+    prevZ = z;
+  }
+  return {dist, phase, tPhase: travelled * 1.7, tSpeed: Math.min(1.25, lastDelta / 0.124)};
+};
+
+const Scene: React.FC<{frame: number}> = ({frame}) => {
+  const {dist, phase, tPhase, tSpeed} = track(frame);
+  const sp = Math.min(1.15, speedAt(frame, WALKS, BOOST));
+  const dz = 6 - dist;
+  const zT = dz + lin(GAP_K, GAP_V, frame);
+  const ang = angleKeys(frame, TURNS);
+  const shot = shotAt(frame);
+  const cam = camFor(shot, frame, dz);
+  const leanK = smooth((frame - LEAN) / 45) - smooth((frame - LASTTURN) / 45);
+  const talking = N.lines.some((l: any) => l.thing && frame >= F(l.start) && frame <= F(l.start + l.dur));
+  const tMouth = talking ? 0.3 + 0.35 * Math.abs(Math.sin(frame * 0.6)) : 0;
+  const tremble = frame >= BREATH ? Math.sin(frame * 1.9) * 0.014 * Math.min(1, (frame - BREATH) / 20) : 0;
+  const hideThing = (frame >= TURN_CUT && frame < RESUME) || shot === 'pov2';
+  const face = {brow: col(1, frame), eye: col(2, frame), mouth: col(3, frame), open: col(4, frame), look: col(5, frame)};
+
+  return (
+    <>
+      <Rig pos={cam.pos} look={cam.look} />
+      <Street theme={THEME} frame={frame} focus={[cam.pos[0], cam.pos[2]]} scroll darkZ={zT + 1.5} />
+      <group position={[X, 0, dz]} rotation={[0, ang, tremble]} visible={shot !== 'pov'}>
+        <Person frame={phase / 0.34} walk={sp} face={face} />
+      </group>
+      <group position={[X + 0.5 * leanK, 0, zT]} visible={!hideThing}>
+        <Stalker phase={tPhase} walk={tSpeed} lean={leanK} mouth={tMouth} />
+      </group>
+    </>
+  );
+};
+
+export const Alone: React.FC = () => {
+  const frame = useCurrentFrame();
+  const last = N.lines[N.lines.length - 1];
+  const lastEnd = F(last.start + last.dur);
+  const fade = interpolate(frame, [lastEnd - 6, lastEnd + 14], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const vig = interpolate(frame, [0, STEPS, LAMPS, BREATH, TOTAL], [0.35, 0.45, 0.6, 0.72, 0.82], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const overlay = (
+    <>
+      <Vignette strength={vig} />
+      {N.hasAudio &&
+        N.lines.map((l, i) => (
+          <Sequence key={i} from={Math.round(l.start * FPS)} durationInFrames={Math.ceil(l.dur * FPS) + 6}>
+            <AudioTag src={staticFile(`audio/Alone/${l.file}`)} volume={1} />
+          </Sequence>
+        ))}
+      <TitleCard text={N.title ?? ''} sub={N.subtitle} seconds={2.8} fps={FPS} />
+      <HighlightCaptions lines={N.lines} fps={FPS} terms={N.highlight ?? []} />
+      <AbsoluteFill style={{backgroundColor: 'black', opacity: fade}} />
+      <EndCard from={lastEnd + 16} text={N.endtext || 'PART 2'} sub="Follow so you don't miss it" />
+    </>
+  );
+  return (
+    <StoryFrame captions={[]} overlay={overlay}>
+      <Scene frame={frame} />
+    </StoryFrame>
+  );
+};
+
+=== FILE: src/studio/stories/Daniel.tsx ===
+import React from 'react';
+import * as R from 'remotion';
+import {AbsoluteFill, Easing, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {Car, CaptionDef, Person, Rig, StoryFrame} from '../kit';
+import {Narration, Vignette} from '../narration';
+import {Street, ThemeName} from '../world';
+import raw from '../data/Daniel.json';
+
+const N = raw as unknown as Narration & {theme?: string; sfx?: boolean};
+const AudioTag: any = (R as any).Html5Audio ?? (R as any).Audio;
+const FPS = N.fps;
+const CUT = N.cutFrame; // frame where we cut to the car
+const TOTAL = N.totalFrames;
+const THEME = (N.theme ?? 'dusk') as ThemeName;
+
+// white captions, one per narration line, timed by the voice
+const captions: CaptionDef[] = N.lines.map((l) => ({
+  from: Math.round(l.start * FPS),
+  dur: Math.ceil(l.dur * FPS) + 10,
+  text: l.text,
+}));
+
+const Scene: React.FC<{frame: number}> = ({frame}) => {
+  const shot2 = frame >= CUT;
+  const walkZ = 4 - 0.124 * Math.min(frame, CUT);
+  const f2 = Math.max(0, frame - CUT);
+  const push = interpolate(f2, [0, Math.max(1, TOTAL - CUT)], [0, 1], {
+    easing: Easing.inOut(Easing.quad),
+    extrapolateRight: 'clamp',
+  });
+  const camPos: [number, number, number] = shot2
+    ? [3.2 - 1.2 * push, 1.0 - 0.15 * push, -14 - 8 * push]
+    : [3.5 + Math.sin(frame * 0.03) * 0.15, 1.9, walkZ + 4.0];
+  const camLook: [number, number, number] = shot2 ? [-1.8, 1.0, -34 + 4 * push] : [4.6, 1.3, walkZ - 3];
+  return (
+    <>
+      <Rig pos={camPos} look={camLook} />
+      <Street theme={THEME} frame={frame} focus={[camPos[0], camPos[2]]} />
+      <group position={[4.4, 0, walkZ]} visible={!shot2}>
+        <Person frame={frame} />
+      </group>
+      <group visible={shot2}>
+        <Car frame={frame} startFrame={CUT} />
+      </group>
+    </>
+  );
+};
+
+export const Daniel: React.FC = () => {
+  const frame = useCurrentFrame();
+  const fade = interpolate(frame, [TOTAL - 15, TOTAL], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const base = THEME === 'day' ? 0.2 : 0.45;
+  const overlay = (
+    <>
+      <Vignette strength={frame >= CUT ? base + 0.2 : base} />
+      {N.hasAudio &&
+        N.lines.map((l, i) => (
+          <Sequence key={i} from={Math.round(l.start * FPS)} durationInFrames={Math.ceil(l.dur * FPS) + 6}>
+            <AudioTag src={staticFile(`audio/Daniel/${l.file}`)} volume={1} />
+          </Sequence>
+        ))}
+      {N.hasAudio && N.sfx && <AudioTag src={staticFile('audio/Daniel/sfx.wav')} volume={0.6} />}
+      <AbsoluteFill style={{backgroundColor: 'black', opacity: fade}} />
+    </>
+  );
+  return (
+    <StoryFrame captions={captions} overlay={overlay}>
+      <Scene frame={frame} />
+    </StoryFrame>
+  );
+};
+
+=== FILE: src/studio/stories/Themes.tsx ===
+import React from 'react';
+import {Person, Rig, StoryFrame} from '../kit';
+import {Street, ThemeName} from '../world';
+
+const Shot: React.FC<{theme: ThemeName}> = ({theme}) => (
+  <StoryFrame captions={[]}>
+    <Rig pos={[3.5, 1.9, 8]} look={[4.6, 1.3, 1]} />
+    <Street theme={theme} frame={40} focus={[3.5, 8]} />
+    <group position={[4.4, 0, 4]}>
+      <Person frame={0} stand />
+    </group>
+  </StoryFrame>
+);
+
+export const ThemeDusk: React.FC = () => <Shot theme="dusk" />;
+export const ThemeDay: React.FC = () => <Shot theme="day" />;
+export const ThemeWinter: React.FC = () => <Shot theme="winter" />;
+
+=== FILE: src/studio/stories/Views.tsx ===
+import React from 'react';
+import {useCurrentFrame} from 'remotion';
+import {Car, House, Person, Rig, Sheet, StoryFrame, orbitCam} from '../kit';
+import {Street} from '../world';
+
+// Stills: four views of each model (front, side, back, side)
+export const SheetPerson: React.FC = () => (
+  <Sheet cols={4} sx={1.65} sz={0} dist={7.5} lookY={0.95} base={Math.PI}>
+    <Person frame={0} stand />
+  </Sheet>
+);
+
+export const SheetCar: React.FC = () => (
+  <Sheet cols={2} sx={6} sz={6} dist={17} lookY={0.8} base={0}>
+    <Car frame={0} still />
+  </Sheet>
+);
+
+export const SheetHouse: React.FC = () => (
+  <Sheet cols={2} sx={11} sz={11} dist={34} lookY={3} base={Math.PI / 2}>
+    <House x={0} z={0} idx={0} side={1} full />
+  </Sheet>
+);
+
+// Videos: camera circles the model in the real street (8 seconds = 360 degrees)
+export const OrbitDaniel: React.FC = () => {
+  const frame = useCurrentFrame();
+  const c = orbitCam([4.4, 1.1, 0], 3.2, frame * 1.5, 1.6);
+  return (
+    <StoryFrame captions={[]}>
+      <Rig pos={c.pos} look={c.look} />
+      <Street detail />
+      <group position={[4.4, 0, 0]}>
+        <Person frame={frame} stand />
+      </group>
+    </StoryFrame>
+  );
+};
+
+export const OrbitCar: React.FC = () => {
+  const frame = useCurrentFrame();
+  const c = orbitCam([-1.8, 0.8, -28], 8, frame * 1.5, 2.2);
+  return (
+    <StoryFrame captions={[]}>
+      <Rig pos={c.pos} look={c.look} />
+      <Street detail />
+      <group position={[-1.8, 0, -28]}>
+        <Car frame={0} still />
+      </group>
+    </StoryFrame>
+  );
+};
+
+=== FILE: src/studio/stories/_Template.tsx ===
+import React from 'react';
+import {interpolate, useCurrentFrame} from 'remotion';
+import {CaptionDef, Person, Rig, StoryFrame} from '../kit';
+import {Street} from '../world';
+// Other tools: Car, orbitCam (from ../kit). Street themes: 'dusk' | 'day' | 'winter'
+
+// Edit the narration lines. 30 frames = 1 second.
+const captions: CaptionDef[] = [
+  {from: 0, dur: 90, text: 'First line of narration.'},
+  {from: 90, dur: 90, text: 'Second line of narration.'},
+];
+
+const Scene: React.FC<{frame: number}> = ({frame}) => {
+  const z = interpolate(frame, [0, 180], [4, -22], {extrapolateRight: 'clamp'});
+  return (
+    <>
+      <Rig pos={[3.5, 1.9, z + 4]} look={[4.6, 1.3, z - 3]} />
+      <Street theme="day" frame={frame} focus={[3.5, z + 4]} />
+      <group position={[4.4, 0, z]}>
+        <Person frame={frame} />
+      </group>
+    </>
+  );
+};
+
+export const StoryName: React.FC = () => {
+  const frame = useCurrentFrame();
+  return (
+    <StoryFrame captions={captions}>
+      <Scene frame={frame} />
+    </StoryFrame>
+  );
+};
+
+=== FILE: src/studio/world.tsx ===
+import React, {useMemo} from 'react';
+import * as THREE from 'three';
+
+type V3 = [number, number, number];
+export type ThemeName = 'dusk' | 'day' | 'winter';
+
+type Theme = {
+  horizon: string;
+  skyTop: string;
+  fog: [number, number];
+  hemi: [string, string, number];
+  ambient: [string, number];
+  key: {pos: V3; color: string; intensity: number};
+  fill: {pos: V3; color: string; intensity: number};
+  sun: null | {pos: V3; r: number; color: string; glow: string; glowOpacity: number};
+  road: string;
+  curb: string;
+  walk: string;
+  lawn: string;
+  walls: string[];
+  roofs: string[];
+  hedge: string;
+  windows: 'lit' | 'glass';
+  lamps: boolean;
+  tree: 'round' | 'pine';
+  leaf: string[];
+  clouds: boolean;
+  snow: boolean;
+  houses: number;
+};
+
+export const THEMES: Record<ThemeName, Theme> = {
+  dusk: {
+    horizon: '#c9a66b',
+    skyTop: '#665766',
+    fog: [8, 48],
+    hemi: ['#ffdca8', '#3a3028', 0.55],
+    ambient: ['#ffd9a0', 0.3],
+    key: {pos: [0, 6, -50], color: '#ffbf80', intensity: 0.7},
+    fill: {pos: [3, 5, 12], color: '#ffd9b0', intensity: 0.9},
+    sun: {pos: [0, 9, -150], r: 7, color: '#ffe9b8', glow: '#ffd9a0', glowOpacity: 0.25},
+    road: '#3a3836',
+    curb: '#7d786e',
+    walk: '#9a9486',
+    lawn: '#4a6b35',
+    walls: ['#8794a3', '#a89a84', '#76897c', '#9a7b6d', '#8c97ae', '#b0a58f'],
+    roofs: ['#2b2f3a', '#3d2b25', '#2f3a34', '#40363a'],
+    hedge: '#35502d',
+    windows: 'lit',
+    lamps: true,
+    tree: 'round',
+    leaf: ['#436b3a', '#3a5e33', '#4c7640'],
+    clouds: false,
+    snow: false,
+    houses: 7,
+  },
+  day: {
+    horizon: '#d3e6f2',
+    skyTop: '#4d8fe0',
+    fog: [28, 90],
+    hemi: ['#ffffff', '#8fa07a', 0.65],
+    ambient: ['#ffffff', 0.3],
+    key: {pos: [12, 30, 18], color: '#fff4dc', intensity: 1.0},
+    fill: {pos: [-10, 8, 10], color: '#dfeaff', intensity: 0.3},
+    sun: null,
+    road: '#45464a',
+    curb: '#a8a398',
+    walk: '#bdb8ad',
+    lawn: '#5e9f43',
+    walls: ['#e8dcc0', '#b9d0e6', '#f0e6d2', '#d9c7a8', '#cfe0d0', '#e9d3c4'],
+    roofs: ['#35384a', '#4a3a35', '#3c4a44', '#44404a'],
+    hedge: '#3f8a3a',
+    windows: 'glass',
+    lamps: false,
+    tree: 'round',
+    leaf: ['#49a845', '#3c9440', '#5cbb52'],
+    clouds: true,
+    snow: false,
+    houses: 11,
+  },
+  winter: {
+    horizon: '#c9d3df',
+    skyTop: '#808fad',
+    fog: [6, 46],
+    hemi: ['#e3ecfa', '#9aa4b4', 0.6],
+    ambient: ['#eaf1ff', 0.25],
+    key: {pos: [0, 5, -50], color: '#ffd9b0', intensity: 0.35},
+    fill: {pos: [3, 6, 12], color: '#e4ecff', intensity: 0.7},
+    sun: {pos: [0, 8, -150], r: 6, color: '#fff1d8', glow: '#ffe8c8', glowOpacity: 0.35},
+    road: '#4b4e57',
+    curb: '#b5bdca',
+    walk: '#cfd7e3',
+    lawn: '#cdd6e4',
+    walls: ['#8f9bb0', '#a39a8e', '#7f8f8a', '#9a8a8a', '#8c97ae', '#b0a89a'],
+    roofs: ['#dfe6f1', '#d6deeb', '#e4eaf4', '#d2dae8'],
+    hedge: '#c4cfdd',
+    windows: 'lit',
+    lamps: true,
+    tree: 'pine',
+    leaf: ['#2f5a46', '#285040', '#366650'],
+    clouds: false,
+    snow: true,
+    houses: 7,
+  },
+};
+
+const rgb = (hex: string) => {
+  const c = parseInt(hex.slice(1), 16);
+  return [(c >> 16) & 255, (c >> 8) & 255, c & 255].map((v) => (v / 255).toFixed(4));
+};
+
+const rng = (seed: number) => () => {
+  seed |= 0;
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+
+/* ---------- Sky ---------- */
+const Sky: React.FC<{T: Theme}> = ({T}) => {
+  const h = rgb(T.horizon);
+  const t = rgb(T.skyTop);
+  return (
+    <group>
+      <mesh>
+        <sphereGeometry args={[180, 24, 16]} />
+        <shaderMaterial
+          side={THREE.BackSide}
+          depthWrite={false}
+          vertexShader={`
+            varying vec3 vDir;
+            void main() {
+              vDir = normalize(position);
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `}
+          fragmentShader={`
+            varying vec3 vDir;
+            void main() {
+              float k = smoothstep(0.0, 0.5, vDir.y);
+              vec3 horizon = vec3(${h[0]}, ${h[1]}, ${h[2]});
+              vec3 top = vec3(${t[0]}, ${t[1]}, ${t[2]});
+              gl_FragColor = vec4(mix(horizon, top, k), 1.0);
+            }
+          `}
+        />
+      </mesh>
+      {T.sun && (
+        <>
+          <mesh position={T.sun.pos}>
+            <circleGeometry args={[T.sun.r, 32]} />
+            <meshBasicMaterial color={T.sun.color} fog={false} />
+          </mesh>
+          <mesh position={[T.sun.pos[0], T.sun.pos[1], T.sun.pos[2] - 1]}>
+            <circleGeometry args={[T.sun.r * 3.7, 32]} />
+            <meshBasicMaterial color={T.sun.glow} transparent opacity={T.sun.glowOpacity} fog={false} depthWrite={false} />
+          </mesh>
+        </>
+      )}
+    </group>
+  );
+};
+
+const Clouds: React.FC<{frame: number}> = ({frame}) => {
+  const clouds = useMemo(() => {
+    const r = rng(9);
+    return Array.from({length: 10}, () => ({x: (r() - 0.5) * 260, y: 38 + r() * 30, z: -110 - r() * 50, s: 0.8 + r() * 0.8}));
+  }, []);
+  const puffs: [number, number, number, number][] = [
+    [0, 0, 0, 9],
+    [8, -1, 1, 7],
+    [-8, -1, 0, 7],
+    [3, 3, -1, 6],
+    [-3, 2, 2, 5.5],
+  ];
+  return (
+    <group>
+      {clouds.map((c, i) => (
+        <group key={i} position={[c.x + frame * 0.02, c.y, c.z]} scale={[c.s, c.s, c.s]}>
+          {puffs.map((p, j) => (
+            <mesh key={j} position={[p[0], p[1], p[2]]} scale={[1, 0.65, 1]}>
+              <sphereGeometry args={[p[3], 12, 10]} />
+              <meshBasicMaterial color="#ffffff" fog={false} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+    </group>
+  );
+};
+
+const Snow: React.FC<{frame: number; cx: number; cz: number}> = ({frame, cx, cz}) => {
+  const count = 450;
+  const seeds = useMemo(() => {
+    const r = rng(5);
+    return Array.from({length: count}, () => [r(), r(), r(), r()]);
+  }, []);
+  const pos = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const [a, b, c, d] = seeds[i];
+    const y = 9 - ((c * 9 + frame * 0.045 * (0.7 + 0.6 * d)) % 9);
+    pos[i * 3] = cx + (a - 0.5) * 22 + Math.sin(frame * 0.025 + d * 6.28) * 0.4;
+    pos[i * 3 + 1] = y + 0.05;
+    pos[i * 3 + 2] = cz + 1 - b * 30;
+  }
+  return (
+    <points frustumCulled={false}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[pos, 3]} />
+      </bufferGeometry>
+      <pointsMaterial color="#ffffff" size={0.1} sizeAttenuation transparent opacity={0.9} depthWrite={false} />
+    </points>
+  );
+};
+
+/* ---------- House ---------- */
+const House: React.FC<{T: Theme; x: number; z: number; idx: number; side: 1 | -1; full?: boolean}> = ({
+  T,
+  x,
+  z,
+  idx,
+  side,
+  full = false,
+}) => {
+  const wall = T.walls[Math.abs(idx) % T.walls.length];
+  const roof = T.roofs[Math.abs(idx * 3 + 1) % T.roofs.length];
+  const H = 5.4;
+  const front = -side * 3.03;
+  const back = side * 3.03;
+  const rotFront = -side * (Math.PI / 2);
+  const rotBack = side * (Math.PI / 2);
+  const lit = (k: number) => T.windows === 'lit' && (idx * 7 + k * 5) % 3 !== 0;
+  const win = (key: string, p: V3, ry: number, k: number) => (
+    <mesh key={key} position={p} rotation={[0, ry, 0]}>
+      <planeGeometry args={[1.1, 1.3]} />
+      {T.windows === 'glass' ? (
+        <meshStandardMaterial color="#8fb7d0" metalness={0.1} roughness={0.25} />
+      ) : (
+        <meshStandardMaterial
+          color={lit(k) ? '#ffd58a' : '#2a3140'}
+          emissive={lit(k) ? '#ffae42' : '#000000'}
+          emissiveIntensity={lit(k) ? 1.5 : 0}
+          roughness={0.4}
+        />
+      )}
+    </mesh>
+  );
+  const porchLight = (p: V3) => (
+    <mesh position={p}>
+      <boxGeometry args={[0.1, 0.22, 0.14]} />
+      {T.lamps ? (
+        <meshStandardMaterial color="#fff0c0" emissive="#ffc86a" emissiveIntensity={3} />
+      ) : (
+        <meshStandardMaterial color="#e9e5da" />
+      )}
+    </mesh>
+  );
+  return (
+    <group position={[x, 0, z]}>
+      <mesh position={[0, H / 2, 0]}>
+        <boxGeometry args={[6, H, 7]} />
+        <meshStandardMaterial color={wall} roughness={0.95} />
+      </mesh>
+      <mesh position={[0, H + 0.73, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1, 1, 0.373]}>
+        <cylinderGeometry args={[3.93, 3.93, 7.6, 3]} />
+        <meshStandardMaterial color={roof} roughness={1} />
+      </mesh>
+      <mesh position={[side * 1.2, H + 1.6, 1.6]}>
+        <boxGeometry args={[0.7, 1.6, 0.7]} />
+        <meshStandardMaterial color="#5b4a45" roughness={1} />
+      </mesh>
+
+      {win('f1', [front, 1.8, -2.2], rotFront, 1)}
+      {win('f2', [front, 1.8, 2.2], rotFront, 2)}
+      {win('f3', [front, 4.0, -2.2], rotFront, 3)}
+      {win('f4', [front, 4.0, 0], rotFront, 4)}
+      {win('f5', [front, 4.0, 2.2], rotFront, 5)}
+      <mesh position={[-side * 3.05, 1.05, 0]}>
+        <boxGeometry args={[0.12, 2.1, 1.1]} />
+        <meshStandardMaterial color={idx % 2 ? '#5a2a26' : '#2a3a52'} roughness={0.8} />
+      </mesh>
+      <mesh position={[-side * 3.35, 0.08, 0]}>
+        <boxGeometry args={[0.8, 0.16, 1.5]} />
+        <meshStandardMaterial color={T.walk} />
+      </mesh>
+      {porchLight([-side * 3.1, 2.0, 0.95])}
+      <mesh position={[-side * 3.5, 2.5, 0]}>
+        <boxGeometry args={[1.0, 0.1, 1.9]} />
+        <meshStandardMaterial color={roof} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-side * 4.9, 0.03, 0]}>
+        <planeGeometry args={[3.8, 1.3]} />
+        <meshStandardMaterial color={T.walk} roughness={1} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[-side * 6.2, 0.4, s * 2.2]}>
+          <boxGeometry args={[0.7, 0.8, 2.6]} />
+          <meshStandardMaterial color={T.hedge} roughness={1} />
+        </mesh>
+      ))}
+
+      {full && (
+        <>
+          {win('b1', [back, 1.8, 1.6], rotBack, 6)}
+          {win('b2', [back, 4.0, -2.2], rotBack, 7)}
+          {win('b3', [back, 4.0, 0], rotBack, 8)}
+          {win('b4', [back, 4.0, 2.2], rotBack, 9)}
+          {win('s1', [0, 1.8, 3.53], 0, 10)}
+          {win('s2', [0, 4.0, 3.53], 0, 11)}
+          {win('s3', [0, 1.8, -3.53], Math.PI, 12)}
+          {win('s4', [0, 4.0, -3.53], Math.PI, 13)}
+          <mesh position={[side * 3.05, 1.05, -1.5]}>
+            <boxGeometry args={[0.12, 2.1, 1.1]} />
+            <meshStandardMaterial color="#3a3f48" roughness={0.8} />
+          </mesh>
+          <mesh position={[side * 3.9, 0.08, -1.5]}>
+            <boxGeometry args={[1.8, 0.16, 2.4]} />
+            <meshStandardMaterial color="#6b5a48" roughness={1} />
+          </mesh>
+          {porchLight([side * 3.1, 2.0, -0.7])}
+          <mesh position={[side * 3.45, 0.3, 2.8]}>
+            <boxGeometry args={[0.6, 0.6, 0.7]} />
+            <meshStandardMaterial color="#9aa0a6" roughness={0.6} />
+          </mesh>
+          <mesh position={[side * 8, 0.6, 0]}>
+            <boxGeometry args={[0.1, 1.2, 12]} />
+            <meshStandardMaterial color="#6b5a48" roughness={1} />
+          </mesh>
+          {[-1, 1].map((s) => (
+            <mesh key={'fe' + s} position={[side * 5.5, 0.6, s * 6]}>
+              <boxGeometry args={[5, 1.2, 0.1]} />
+              <meshStandardMaterial color="#6b5a48" roughness={1} />
+            </mesh>
+          ))}
+        </>
+      )}
+    </group>
+  );
+};
+
+/* ---------- Trees ---------- */
+const Tree: React.FC<{T: Theme; x: number; z: number; s: number}> = ({T, x, z, s}) => {
+  if (T.tree === 'pine') {
+    const tiers: [number, number, number][] = [
+      [2.2, 1.45, 1.9],
+      [3.3, 1.1, 1.6],
+      [4.3, 0.75, 1.4],
+    ];
+    return (
+      <group position={[x, 0, z]} scale={[s, s, s]}>
+        <mesh position={[0, 1.0, 0]}>
+          <cylinderGeometry args={[0.14, 0.2, 2.0, 7]} />
+          <meshStandardMaterial color="#4a3426" roughness={1} />
+        </mesh>
+        {tiers.map((t, i) => (
+          <React.Fragment key={i}>
+            <mesh position={[0, t[0], 0]}>
+              <coneGeometry args={[t[1], t[2], 8]} />
+              <meshStandardMaterial color={T.leaf[i % T.leaf.length]} roughness={1} flatShading />
+            </mesh>
+            <mesh position={[0, t[0] + t[2] * 0.22, 0]}>
+              <coneGeometry args={[t[1] * 0.74, t[2] * 0.58, 8]} />
+              <meshStandardMaterial color="#eef3fa" roughness={1} flatShading />
+            </mesh>
+          </React.Fragment>
+        ))}
+      </group>
+    );
+  }
+  return (
+    <group position={[x, 0, z]} scale={[s, s, s]}>
+      <mesh position={[0, 1.2, 0]}>
+        <cylinderGeometry args={[0.14, 0.2, 2.4, 7]} />
+        <meshStandardMaterial color="#4a3426" roughness={1} />
+      </mesh>
+      <mesh position={[0, 3.5, 0]}>
+        <icosahedronGeometry args={[1.5, 1]} />
+        <meshStandardMaterial color={T.leaf[0]} roughness={1} flatShading />
+      </mesh>
+      <mesh position={[0.7, 3.0, 0.3]}>
+        <icosahedronGeometry args={[1.0, 1]} />
+        <meshStandardMaterial color={T.leaf[1]} roughness={1} flatShading />
+      </mesh>
+      <mesh position={[-0.6, 3.1, -0.4]}>
+        <icosahedronGeometry args={[1.1, 1]} />
+        <meshStandardMaterial color={T.leaf[2]} roughness={1} flatShading />
+      </mesh>
+    </group>
+  );
+};
+
+/* ---------- Lamp ---------- */
+const Lamp: React.FC<{T: Theme; x: number; z: number; light?: boolean; off?: boolean}> = ({T, x, z, light, off = false}) => (
+  <group position={[x, 0, z]}>
+    <mesh position={[0, 0.15, 0]}>
+      <cylinderGeometry args={[0.16, 0.2, 0.3, 8]} />
+      <meshStandardMaterial color="#1b1b1b" />
+    </mesh>
+    <mesh position={[0, 2.1, 0]}>
+      <cylinderGeometry args={[0.06, 0.08, 4.2, 8]} />
+      <meshStandardMaterial color="#1b1b1b" />
+    </mesh>
+    <mesh position={[0, 4.4, 0]}>
+      <boxGeometry args={[0.34, 0.45, 0.34]} />
+      {T.lamps && !off ? (
+        <meshStandardMaterial color="#fff0c0" emissive="#ffd27a" emissiveIntensity={3} />
+      ) : (
+        <meshStandardMaterial color="#e9e5da" />
+      )}
+    </mesh>
+    <mesh position={[0, 4.78, 0]} rotation={[0, Math.PI / 4, 0]}>
+      <coneGeometry args={[0.32, 0.3, 4]} />
+      <meshStandardMaterial color="#1b1b1b" />
+    </mesh>
+    {T.lamps && light && <pointLight position={[0, 4.3, 0]} intensity={off ? 0 : 30} distance={15} color="#ffc680" />}
+  </group>
+);
+
+/* ---------- Street (the whole town set) ---------- */
+export const Street: React.FC<{
+  theme?: ThemeName;
+  detail?: boolean;
+  frame?: number;
+  focus?: [number, number];
+  scroll?: boolean;
+  darkZ?: number;
+}> = ({theme = 'dusk', detail = false, frame = 0, focus = [0, 0], scroll = false, darkZ = 1e9}) => {
+  const T = THEMES[theme];
+  const fz = focus[1];
+  const iMin = scroll ? Math.ceil((6 - (fz + 52)) / 10) : 0;
+  const iMax = scroll ? Math.floor((6 - (fz - 62)) / 10) : T.houses - 1;
+  const houses = Array.from({length: iMax - iMin + 1}, (_, k) => iMin + k);
+  const lampCount = Math.ceil((T.houses * 10) / 14) + 1;
+  const lMin = scroll ? Math.ceil((2 - (fz + 52)) / 14) : 0;
+  const lMax = scroll ? Math.floor((2 - (fz - 62)) / 14) : lampCount - 1;
+  const lamps = Array.from({length: lMax - lMin + 1}, (_, k) => lMin + k);
+  const i0 = Math.ceil((2 - fz) / 14);
+  return (
+    <>
+      <fog attach="fog" args={[T.horizon, T.fog[0], T.fog[1]]} />
+      <hemisphereLight args={[T.hemi[0], T.hemi[1], T.hemi[2]]} />
+      <ambientLight intensity={T.ambient[1]} color={T.ambient[0]} />
+      <directionalLight position={T.key.pos} intensity={T.key.intensity} color={T.key.color} />
+      <directionalLight position={T.fill.pos} intensity={T.fill.intensity} color={T.fill.color} />
+      <group position={[0, 0, scroll ? fz : 0]}>
+        <Sky T={T} />
+        {T.clouds && <Clouds frame={frame} />}
+      </group>
+      {T.snow && <Snow frame={frame} cx={focus[0]} cz={focus[1]} />}
+
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -80]}>
+        <planeGeometry args={[7, 240]} />
+        <meshStandardMaterial color={T.road} roughness={1} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <React.Fragment key={s}>
+          <mesh position={[s * 3.6, 0.06, -80]}>
+            <boxGeometry args={[0.2, 0.12, 240]} />
+            <meshStandardMaterial color={T.curb} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[s * 4.7, 0.05, -80]}>
+            <planeGeometry args={[2, 240]} />
+            <meshStandardMaterial color={T.walk} roughness={1} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[s * 18, 0, -80]}>
+            <planeGeometry args={[24.6, 240]} />
+            <meshStandardMaterial color={T.lawn} roughness={1} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[s * 3.0, 0.015, -80]}>
+            <planeGeometry args={[0.12, 240]} />
+            <meshStandardMaterial color="#d8d4c8" roughness={1} />
+          </mesh>
+        </React.Fragment>
+      ))}
+      {Array.from({length: 40}).map((_, i) => (
+        <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 10 - i * 5]}>
+          <planeGeometry args={[0.15, 2.2]} />
+          <meshStandardMaterial color="#d9b23a" roughness={1} />
+        </mesh>
+      ))}
+
+      {houses.map((i) => (
+        <React.Fragment key={i}>
+          <House T={T} x={12.5} z={6 - i * 10} idx={i} side={1} full={detail} />
+          <House T={T} x={-12.5} z={3 - i * 10} idx={i + 3} side={-1} full={detail} />
+          <Tree T={T} x={7.5} z={1 - i * 10} s={0.9 + (i % 3) * 0.12} />
+          <Tree T={T} x={-7.5} z={-2 - i * 10} s={1.0 + ((i + 1) % 3) * 0.1} />
+        </React.Fragment>
+      ))}
+
+      {lamps.map((i) => (
+        <React.Fragment key={'lp' + i}>
+          <Lamp T={T} x={5.2} z={2 - i * 14} light={scroll ? i >= i0 - 1 && i <= i0 + 1 : i < 3} off={2 - i * 14 > darkZ} />
+          <Lamp T={T} x={-5.2} z={-5 - i * 14} off={-5 - i * 14 > darkZ} />
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
+=== FILE: still.sh ===
+#!/bin/bash
+# usage: ./still.sh SheetPerson   ->  out/SheetPerson.png
+npx remotion still src/studio/index.ts "$1" "out/$1.png" --gl=swangle
+
+=== FILE: theme.sh ===
+#!/bin/bash
+# usage: ./theme.sh Daniel winter     (dusk | day | winter) - costs no voice credits
+sed -i "s/^theme:.*/theme: $2/" "script/$1.txt"
+python3 - "$1" "$2" <<'PY'
+import json, sys
+p = f'src/studio/data/{sys.argv[1]}.json'
+d = json.load(open(p))
+d['theme'] = sys.argv[2]
+json.dump(d, open(p, 'w'), indent=1)
+print('theme set to', sys.argv[2])
+PY
+
+=== FILE: tools/cues.py ===
+import json, os, sys
+
+name = sys.argv[1]
+d = json.load(open(f'src/studio/data/{name}.json'))
+
+
+def t(sec):
+    return f'{int(sec // 60)}:{sec % 60:04.1f}'
+
+
+out = [f'CUE SHEET for {name}  (total {t(d["total"])})', '', 'NARRATION LINES (* = the creature speaks)']
+out += [f'  {t(l["start"])}  {"* " if l.get("thing") else ""}{l["text"][:50]}' for l in d['lines']]
+plan = d.get('plan')
+if plan:
+    out += ['', 'HE WALKS (his footsteps):']
+    out += [f'  {t(a)} - {t(b)}' for a, b in plan['walk']]
+    out += [f'  from {t(plan["boost"][0])} he walks about 40% faster (quicker steps)']
+    out += ['', 'IT FOLLOWS (a second set of footsteps, a beat behind him):']
+    out += [f'  {t(a)} - {t(b)}' for a, b in plan['follower']]
+    out += ['', 'SILENCE (no footsteps at all):']
+    f = plan['follower']
+    out += [f'  {t(f[i][1])} - {t(f[i + 1][0])}' for i in range(len(f) - 1)]
+    out += [f'  {t(plan["lastTurn"][0])} - end   (he stands frozen, it only breathes)']
+tags = d.get('tags', {})
+labels = [('tonight', 'mood turns'), ('steps', 'first footsteps behind him'), ('turn', 'close shot: he turns'),
+          ('nobody', 'empty street, his point of view'), ('relief', 'he laughs'),
+          ('lamps', 'streetlights start going out behind him, one by one'),
+          ('fast', 'he speeds up and so does it'), ('near', 'it is right behind him (we see it)'),
+          ('breath', 'he freezes, cold breath'), ('lean', 'it bends down to his ear'),
+          ('whisper', 'its whisper'), ('name', 'it says his name'), ('lastturn', 'he turns around'),
+          ('endline', 'last line over black')]
+out += ['', 'BIG MOMENTS']
+out += [f'  {t(tags[k])}  {v}' for k, v in labels if k in tags]
+text = '\n'.join(out)
+print(text)
+os.makedirs('out', exist_ok=True)
+open(f'out/cues_{name}.txt', 'w').write(text + '\n')
+
+=== FILE: tools/eleven.py ===
+import json, os, sys, urllib.request, urllib.error
+
+BASE = os.environ.get('ELEVEN_BASE', 'https://api.elevenlabs.io')
+
+
+class Fail(Exception):
+    pass
+
+
+def key():
+    k = os.environ.get('ELEVENLABS_API_KEY', '').strip()
+    if not k and os.path.exists('.env'):
+        for ln in open('.env'):
+            if ln.strip().startswith('ELEVENLABS_API_KEY='):
+                k = ln.split('=', 1)[1].strip().strip('"').strip("'")
+    if not k or k == 'PASTE_YOUR_KEY_HERE':
+        raise Fail('No ElevenLabs key yet. Open the file called .env and put your key after ELEVENLABS_API_KEY=')
+    return k
+
+
+def http(method, url, k, body=None, raw=False):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method,
+                                 headers={'xi-api-key': k, 'Content-Type': 'application/json', 'Accept': '*/*'})
+    try:
+        with urllib.request.urlopen(req, timeout=180) as r:
+            out = r.read()
+    except urllib.error.HTTPError as e:
+        raise Fail(f'ElevenLabs error {e.code}: ' + e.read().decode('utf-8', 'ignore')[:300])
+    except urllib.error.URLError as e:
+        raise Fail(f'Could not reach ElevenLabs: {e.reason}')
+    return out if raw else json.loads(out)
+
+
+def find_voice(name, k):
+    want = name.lower().strip()
+    names = []
+    for url in (BASE + '/v1/voices', BASE + '/v2/voices?page_size=100'):
+        try:
+            voices = http('GET', url, k).get('voices', [])
+        except Fail:
+            continue
+        for v in voices:
+            names.append(v['name'])
+            if v['name'].lower() == want:
+                return v['voice_id']
+        for v in voices:
+            if v['name'].lower().startswith(want):
+                return v['voice_id']
+    raise Fail(f'Voice "{name}" not found on your account. Voices I can see: ' + ', '.join(sorted(set(names))[:30]))
+
+
+def speak(text, voice_id, k, path, model='eleven_multilingual_v2', stability=0.4,
+          similarity=0.8, style=0.35, speed=0.92):
+    url = f'{BASE}/v1/text-to-speech/{voice_id}?output_format=mp3_44100_128'
+    body = {
+        'text': text,
+        'model_id': model,
+        'voice_settings': {'stability': stability, 'similarity_boost': similarity,
+                           'style': style, 'use_speaker_boost': True, 'speed': speed},
+    }
+    audio = http('POST', url, k, body, raw=True)
+    if len(audio) < 1000:
+        raise Fail('ElevenLabs sent back almost no audio: ' + audio[:200].decode('utf-8', 'ignore'))
+    open(path, 'wb').write(audio)
+    return len(audio) * 8 / 128000.0
+
+=== FILE: tools/import.py ===
+import os, re, sys
+
+name = sys.argv[1]
+theme = sys.argv[2] if len(sys.argv) > 2 else None
+text = sys.stdin.read().replace('\r', '')
+if not text.strip():
+    sys.exit('ERROR: nothing was pasted.')
+
+header = {'provider': 'elevenlabs', 'voice': 'George', 'model': 'eleven_multilingual_v2', 'stability': '0.4',
+          'style': '0.35', 'speed': '0.92', 'theme': 'dusk', 'sfx': 'off', 'tail': '3.5'}
+path = f'script/{name}.txt'
+if os.path.exists(path):
+    for ln in open(path).read().partition('---')[0].splitlines():
+        if ':' in ln and not ln.strip().startswith('#'):
+            k, v = ln.split(':', 1)
+            header[k.strip()] = v.strip()
+if theme:
+    if theme not in ('dusk', 'day', 'winter'):
+        sys.exit('ERROR: theme must be dusk, day or winter')
+    header['theme'] = theme
+
+MARK = '\u0001'
+text = text.replace('>>', MARK)
+items = []
+for para in [p.strip() for p in re.split(r'\n\s*\n', text) if p.strip()]:
+    para = ' '.join(para.split())
+    first = True
+    for part in re.split(r'(?<=[.!?])\s+(?=[A-Z"\u201c\[' + MARK + r'])', para):
+        part = part.strip()
+        cut = part.startswith(MARK)
+        part = part.replace(MARK, '').strip()
+        part = re.sub(r'^(narrator|daniel)\s*:\s*', '', part, flags=re.I)
+        part = re.sub(r'^\[.*?\]\s*', '', part)
+        if not part:
+            continue
+        while len(part) > 110:
+            cutpoint = part.rfind(', ', 0, 100)
+            if cutpoint < 30:
+                break
+            items.append((part[:cutpoint + 1], False, first))
+            part = part[cutpoint + 2:]
+            first = False
+        items.append((part, cut, first))
+        first = False
+
+cut_idx = next((i for i, it in enumerate(items) if it[1]), None)
+if cut_idx is None:
+    cut_idx = next((i for i, it in enumerate(items) if it[0].lower().startswith('but') and i > 0), None)
+if cut_idx is None:
+    cut_idx = max(1, int(len(items) * 0.55))
+
+lines = []
+prev = ''
+for i, (t, _, para_start) in enumerate(items):
+    pause = 0.4 if i == 0 else 0.5
+    if prev.endswith('...') or (para_start and i > 0):
+        pause = 1.0
+    if i == cut_idx:
+        pause = max(pause, 1.4)
+    lines.append(('@cut ' if i == cut_idx else '') + f'{pause} | {t}')
+    prev = t
+
+out = [f'{k}: {v}' for k, v in header.items()]
+out += ['---', '# theme can be: dusk, day, winter',
+        '# format:  pause-before-line-in-seconds | what the narrator says',
+        '# @cut = the line where the camera cuts to the car'] + lines
+open(path, 'w').write('\n'.join(out) + '\n')
+
+chars = sum(len(it[0]) for it in items)
+words = sum(len(it[0].split()) for it in items)
+est = words / 2.1 + sum(float(l.replace('@cut ', '').split('|')[0]) for l in lines) + float(header['tail'])
+print(f'{len(items)} lines, {chars} characters (= {chars} ElevenLabs credits), about {est:.0f} seconds')
+print(f'camera cuts to the car at line {cut_idx + 1}: {items[cut_idx][0][:50]}')
+if est > 58:
+    print('WARNING: over 58 seconds. YouTube Shorts allow up to 60, so consider trimming.')
+
+=== FILE: tools/narrate.py ===
+import asyncio, hashlib, json, math, os, re, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import eleven
+import plans
+
+FPS = 30
+name = sys.argv[1]
+dry = '--dry' in sys.argv
+
+src = open(f'script/{name}.txt').read()
+head, _, body = src.partition('---')
+cfg = {'provider': 'elevenlabs', 'voice': 'George', 'model': 'eleven_multilingual_v2',
+       'stability': '0.4', 'similarity': '0.8', 'style': '0.35', 'speed': '0.92',
+       'rate': '-10%', 'pitch': '-4Hz', 'tail': '3.5', 'theme': 'dusk', 'sfx': 'off',
+       'story': '', 'title': '', 'highlight': '', 'subtitle': '', 'endtext': '', 'thing_voice': '',
+       'thing_stability': '0.25', 'thing_style': '0.7', 'thing_speed': '0.8'}
+for ln in head.splitlines():
+    if ':' in ln and not ln.strip().startswith('#'):
+        k, v = ln.split(':', 1)
+        cfg[k.strip()] = v.strip()
+
+lines = []
+for ln in body.splitlines():
+    ln = ln.strip()
+    if not ln or ln.startswith('#'):
+        continue
+    tagl = []
+    m = re.match(r'((?:@\w+\s+)+)', ln)
+    if m:
+        tagl = re.findall(r'@(\w+)', m.group(1))
+        ln = ln[m.end():]
+    pause, _, text = ln.partition('|')
+    lines.append({'pause': float(pause), 'text': text.strip(), 'tags': tagl})
+
+adir = f'public/audio/{name}'
+os.makedirs(adir, exist_ok=True)
+os.makedirs('src/studio/data', exist_ok=True)
+
+
+def spread(tokens, t0, t1):
+    weights = [len(t) + 2 for t in tokens]
+    total = float(sum(weights))
+    out, cur = [], t0
+    for tok, w in zip(tokens, weights):
+        d = (t1 - t0) * w / total
+        out.append({'w': tok, 's': round(cur, 3), 'e': round(cur + d, 3)})
+        cur += d
+    return out
+
+
+async def edge_synth(text, path):
+    import edge_tts
+    com = edge_tts.Communicate(text, cfg['voice'], rate=cfg['rate'], pitch=cfg['pitch'])
+    audio = bytearray()
+    async for ch in com.stream():
+        if ch['type'] == 'audio':
+            audio += ch['data']
+    open(path, 'wb').write(bytes(audio))
+    return len(audio) * 8 / 48000.0
+
+
+def main():
+    key = vid = tvid = None
+    if not dry and cfg['provider'] == 'elevenlabs':
+        key = eleven.key()
+        vid = cfg.get('voice_id') or eleven.find_voice(cfg['voice'], key)
+        tvid = vid
+        if cfg['thing_voice']:
+            try:
+                tvid = eleven.find_voice(cfg['thing_voice'], key)
+            except eleven.Fail:
+                print('NOTE: creature voice not found on your account, using the narrator voice for it.')
+    t = 0.0
+    out_lines = []
+    tags = {}
+    chars = 0
+    cache_path = f'{adir}/cache.json'
+    cache = json.load(open(cache_path)) if os.path.exists(cache_path) else {}
+    for i, l in enumerate(lines):
+        t += l['pause']
+        tokens = l['text'].split()
+        fname = f'line_{i + 1:02d}.mp3'
+        path = f'{adir}/{fname}'
+        sig = hashlib.md5(json.dumps([cfg['provider'], cfg['voice'], cfg.get('voice_id', ''), cfg['model'],
+                                      cfg['stability'], cfg['similarity'], cfg['style'], cfg['speed'],
+                                      cfg['rate'], cfg['pitch'], l['text'], 'thing' in l['tags'], cfg['thing_voice'],
+                                      cfg['thing_stability'], cfg['thing_style'], cfg['thing_speed']]).encode()).hexdigest()
+        if dry:
+            dur = max(0.9, len(tokens) / 2.3)
+        elif cache.get(fname, {}).get('sig') == sig and os.path.exists(path):
+            dur = cache[fname]['dur']
+            print(f'line {i + 1}: {dur:.1f}s (reused, no credits)')
+        else:
+            if cfg['provider'] == 'elevenlabs':
+                th = 'thing' in l['tags'] and bool(tvid)
+                dur = eleven.speak(l['text'], tvid if th else vid, key, path, model=cfg['model'],
+                                   stability=float(cfg['thing_stability' if th else 'stability']),
+                                   similarity=float(cfg['similarity']),
+                                   style=float(cfg['thing_style' if th else 'style']),
+                                   speed=float(cfg['thing_speed' if th else 'speed']))
+                chars += len(l['text'])
+            else:
+                dur = asyncio.run(edge_synth(l['text'], path))
+            cache[fname] = {'sig': sig, 'dur': dur}
+            json.dump(cache, open(cache_path, 'w'))
+            print(f'line {i + 1}: {dur:.1f}s')
+        out_lines.append({'text': l['text'], 'start': round(t, 3), 'dur': round(dur, 3), 'file': fname,
+                          'tag': (l['tags'] or [None])[0], 'tags': l['tags'], 'thing': 'thing' in l['tags'], 'words': spread(tokens, 0.05, max(0.2, dur - 0.1))})
+        for tg in l['tags']:
+            if tg not in tags:
+                tags[tg] = round(t, 3)
+        t += dur
+    total = t + float(cfg['tail'])
+    cut_start = tags.get('cut', total * 0.6)
+    data = {
+        'fps': FPS,
+        'total': round(total, 3),
+        'totalFrames': int(math.ceil(total * FPS)),
+        'cutFrame': int(round(cut_start * FPS)),
+        'hasAudio': not dry,
+        'theme': cfg['theme'],
+        'sfx': cfg['sfx'] == 'on',
+        'title': cfg['title'],
+        'subtitle': cfg['subtitle'],
+        'endtext': cfg['endtext'],
+        'highlight': [h.strip() for h in cfg['highlight'].split(',') if h.strip()],
+        'tags': tags,
+        'lines': out_lines,
+    }
+    if cfg['story'] == 'alone':
+        data['plan'] = plans.alone(tags)
+    json.dump(data, open(f'src/studio/data/{name}.json', 'w'), indent=1)
+    extra = f', {chars} ElevenLabs credits used' if chars else ''
+    print(f"{'(dry run) ' if dry else ''}{name}: {total:.1f}s total, theme {cfg['theme']}{extra}")
+
+
+try:
+    main()
+except eleven.Fail as e:
+    sys.exit('ERROR: ' + str(e))
+
+=== FILE: tools/plans.py ===
+def alone(tags):
+    g = lambda k, d: tags.get(k, d)
+    r = lambda x: round(x, 3)
+    steps, stop, walk, turn = g('steps', 8.0), g('stop', 11.0), g('walk', 13.0), g('turn', 15.0)
+    resume, fast, breath, lastturn = g('resume', 20.0), g('fast', 26.0), g('breath', 31.0), g('lastturn', 50.0)
+    rt_start = max(turn + 1.3, resume - 0.9)
+    return {
+        'walk': [[0.0, r(stop + 0.15)], [r(walk + 0.25), r(turn + 0.05)], [r(resume), r(breath + 0.1)]],
+        'boost': [r(fast), 0.4],
+        'turn': [r(turn + 0.1), r(turn + 1.1)],
+        'returnTurn': [r(rt_start), r(rt_start + 0.8)],
+        'lastTurn': [r(lastturn + 0.1), r(lastturn + 1.4)],
+        'follower': [[r(steps), r(stop + 0.4)], [r(walk + 0.25), r(turn + 0.05)], [r(resume), r(breath + 0.8)]],
+    }
+
+=== FILE: tools/sound.py ===
+import array, json, math, random, sys, wave
+
+name = sys.argv[1]
+d = json.load(open(f'src/studio/data/{name}.json'))
+SR = 32000
+TAU = 2 * math.pi
+TOTAL = d['total']
+CUT = d['cutFrame'] / d['fps']
+N = int(TOTAL * SR)
+random.seed(11)
+
+mix = [0.0] * N
+
+
+def rms(buf):
+    return math.sqrt(sum(x * x for x in buf) / max(1, len(buf))) or 1.0
+
+
+def add(buf, start_sec, samples, gain=1.0):
+    i0 = int(start_sec * SR)
+    for k, x in enumerate(samples):
+        j = i0 + k
+        if 0 <= j < len(buf):
+            buf[j] += x * gain
+
+
+def bed_gain(t):
+    g = min(1.0, t / 1.5)
+    if t > CUT:
+        prog = (t - CUT) / max(1.0, TOTAL - CUT)
+        g *= 0.7 + 0.3 * prog
+    if CUT - 2.2 < t < CUT - 0.18:
+        g *= 0.75
+    if CUT - 0.18 <= t < CUT + 0.15:
+        g *= 0.0
+    elif CUT + 0.15 <= t < CUT + 1.2:
+        g *= (t - CUT - 0.15) / 1.05
+    if t > TOTAL - 0.6:
+        g *= max(0.0, (TOTAL - t) / 0.6)
+    return g
+
+
+# --- wind ---
+a1 = 1 - math.exp(-TAU * 450 / SR)
+l1 = l2 = 0.0
+wind = [0.0] * N
+for i in range(N):
+    t = i / SR
+    x = random.uniform(-1, 1)
+    l1 += a1 * (x - l1)
+    l2 += a1 * (l1 - l2)
+    gust = 0.55 + 0.45 * math.sin(TAU * 0.11 * t + 1.3) * math.sin(TAU * 0.23 * t + 0.4)
+    wind[i] = l2 * gust
+s = 0.16 / rms(wind)
+for i in range(N):
+    mix[i] += wind[i] * s * bed_gain(i / SR)
+
+# --- low drone (swells toward the end) ---
+for i in range(N):
+    t = i / SR
+    trem = 0.8 + 0.2 * math.sin(TAU * 0.17 * t)
+    v = (math.sin(TAU * 55.0 * t) + math.sin(TAU * 55.6 * t) * 0.8
+         + math.sin(TAU * 82.4 * t) * 0.35 + math.sin(TAU * 110.3 * t) * 0.2) * trem
+    swell = 1.0 + (1.2 * max(0.0, (t - CUT) / max(1.0, TOTAL - CUT)) if t > CUT else 0.0)
+    mix[i] += v * 0.05 * swell * bed_gain(t)
+
+# --- crickets (stop dead at the cut) ---
+t = 1.0
+while t < CUT - 0.4:
+    f = random.choice([4100.0, 4350.0, 4600.0])
+    for c in range(3):
+        n = int(0.03 * SR)
+        chirp = [math.sin(TAU * f * k / SR) * math.sin(math.pi * k / n) ** 2 for k in range(n)]
+        add(mix, t + c * 0.055, chirp, 0.02 * bed_gain(t))
+    t += random.uniform(0.7, 1.5)
+
+# --- footsteps matching the walk cycle (one step every 9.24 frames) ---
+k = 0
+while True:
+    ts = (4.62 + 9.24 * k) / d['fps']
+    if ts > CUT - 0.25:
+        break
+    n = int(0.14 * SR)
+    pitch = random.uniform(70, 95)
+    amp = random.uniform(0.8, 1.05)
+    nz = 0.0
+    step = []
+    for q in range(n):
+        tt = q / SR
+        nz += 0.25 * (random.uniform(-1, 1) - nz)
+        step.append(math.sin(TAU * pitch * tt) * math.exp(-tt * 40) * 0.5 + nz * math.exp(-tt * 55) * 0.55)
+    add(mix, ts, step, 0.9 * amp * min(1.0, ts / 1.0 + 0.2))
+    k += 1
+
+# --- riser into the cut, then total silence ---
+r0 = CUT - 2.2
+rn = int(2.02 * SR)
+lp = 0.0
+riser = []
+for q in range(rn):
+    p = q / rn
+    a = 0.01 * (60 ** p)
+    lp += min(0.9, a) * (random.uniform(-1, 1) - lp)
+    riser.append(lp * (p ** 2.2) + math.sin(TAU * (70 + 330 * p) * q / SR) * 0.05 * p)
+sc = 0.14 / rms(riser)
+add(mix, r0, riser, sc)
+
+# --- boom + reverb tail at the cut ---
+bn = int(4.0 * SR)
+boom = []
+ph = 0.0
+nz = 0.0
+for q in range(bn):
+    tt = q / SR
+    f = 38 + 42 * math.exp(-tt * 3.0)
+    ph += TAU * f / SR
+    nz += 0.08 * (random.uniform(-1, 1) - nz)
+    boom.append(math.sin(ph) * math.exp(-tt * 1.1) * 0.95 + nz * math.exp(-tt * 3.0) * 1.6)
+wet = boom[:]
+for delay, fb in ((0.037, 0.55), (0.053, 0.5), (0.071, 0.45), (0.097, 0.4)):
+    dn = int(delay * SR)
+    buf = [0.0] * bn
+    for q in range(bn):
+        buf[q] = boom[q] + (buf[q - dn] * fb if q >= dn else 0.0)
+    for q in range(bn):
+        wet[q] += buf[q] * 0.3
+add(mix, CUT, wet, 0.5)
+
+# --- car engine: arrives, brakes, idles ---
+en = N - int(CUT * SR)
+lp = 0.0
+eng = []
+for q in range(max(0, en)):
+    tt = q / SR
+    lp += 0.02 * (random.uniform(-1, 1) - lp)
+    if tt < 2.4:
+        env = (tt / 2.4) ** 1.5
+    elif tt < 3.4:
+        env = 1.0 - 0.65 * (tt - 2.4)
+    else:
+        env = 0.35
+    chug = 0.7 + 0.3 * math.sin(TAU * 11 * tt)
+    pitch = 1.0 + 0.25 * (env if tt < 2.4 else 0.0)
+    v = (math.sin(TAU * 47 * pitch * tt) + 0.6 * math.sin(TAU * 94 * pitch * tt)) * chug + lp * 9
+    eng.append(v * env)
+if eng:
+    sc = 0.11 / rms(eng)
+    for q in range(len(eng)):
+        eng[q] *= sc * (max(0.0, min(1.0, (TOTAL - (CUT + q / SR)) / 0.6)))
+    add(mix, CUT + 0.2, eng, 1.0)
+
+# --- heartbeat, speeding up ---
+tb = CUT + 2.5
+while tb < TOTAL - 0.5:
+    prog = (tb - (CUT + 2.5)) / max(1.0, TOTAL - CUT - 3.0)
+    bpm = 60 + 40 * min(1.0, prog)
+    amp = 0.22 + 0.3 * min(1.0, prog)
+    for off, a2 in ((0.0, 1.0), (0.23, 0.65)):
+        n = int(0.28 * SR)
+        beat = [math.sin(TAU * 52 * q / SR) * math.exp(-q / SR * 20) for q in range(n)]
+        add(mix, tb + off, beat, amp * a2)
+    tb += 60.0 / bpm
+
+# --- master ---
+peak = max(abs(x) for x in mix) or 1.0
+scale = 0.9 / peak
+pcm = array.array('h', [int(max(-1.0, min(1.0, x * scale)) * 32000) for x in mix])
+with wave.open(f'public/audio/{name}/sfx.wav', 'wb') as w:
+    w.setnchannels(1)
+    w.setsampwidth(2)
+    w.setframerate(SR)
+    w.writeframes(pcm.tobytes())
+print(f'sfx.wav written ({TOTAL:.1f}s)')
+
+=== FILE: tools/voicetest.py ===
+import os, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import eleven
+
+NAMES = ['George', 'Brian', 'Daniel', 'Callum', 'Harry', 'Will', 'Eric', 'Bill', 'Clyde', 'Roger']
+TEXT = "Nobody knew my secret. Everyone in town knew I was a quiet man."
+
+try:
+    k = eleven.key()
+    os.makedirs('out', exist_ok=True)
+    for n in NAMES:
+        try:
+            vid = eleven.find_voice(n, k)
+        except eleven.Fail:
+            print('skipped (not on your account):', n)
+            continue
+        eleven.speak(TEXT, vid, k, f'out/voice_{n}.mp3')
+        print('made', n)
+except eleven.Fail as e:
+    sys.exit('ERROR: ' + str(e))
+
+=== FILE: tsconfig.json ===
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "lib": ["es2015"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true
+  },
+  "exclude": ["remotion.config.ts"]
+}
+
+=== FILE: voice.sh ===
+#!/bin/bash
+# usage: ./voice.sh Alone   -> narration + timing, then a cue sheet for your own audio
+mkdir -p out
+python3 tools/narrate.py "$1" || exit 1
+python3 tools/cues.py "$1"
+
+=== FILE: voicetest.sh ===
+#!/bin/bash
+python3 tools/voicetest.py
